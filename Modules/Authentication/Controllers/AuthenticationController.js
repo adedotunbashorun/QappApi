@@ -77,22 +77,23 @@ class AuthenticationController{
     }
 
     static logout(req, res, next) {
-        User.findOne({ temporarytoken: req.headers.authorization }).then((user) => {
-            if (user) {
-                user.temporarytoken = null;
-                 user.save();
+        return "not yet implemented"
+        // User.findOne({ temporarytoken: req.headers.authorization }).then((user) => {
+        //     if (user) {
+        //         user.temporarytoken = null;
+        //          user.save();
 
-                Activity.activity_log(req, user._id, 'Logged Out')
-            }
-            return res.status(201).json({
-                'msg': 'Logout Successfull!',
-                token: null
-            });
-        }).catch((err) => {
-            return res.status(401).json({
-                'msg': 'Unable to logout'
-            });
-        })
+        //         Activity.activity_log(req, user._id, 'Logged Out')
+        //     }
+        //     return res.status(201).json({
+        //         'msg': 'Logout Successfull!',
+        //         token: null
+        //     });
+        // }).catch((err) => {
+        //     return res.status(401).json({
+        //         'msg': 'Unable to logout'
+        //     });
+        // })
         
     }
 }
