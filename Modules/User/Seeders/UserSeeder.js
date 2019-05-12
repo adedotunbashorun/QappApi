@@ -16,7 +16,7 @@ UserSeeder.seedUser = (req, res) => {
         user.email = 'adedotunolawale@gmail.com'
         user.temporarytoken = null
         user.password = User.hashPassword('123456')
-        users.is_active = true
+        user.is_active = true
         user.save()
 
         // seeded!

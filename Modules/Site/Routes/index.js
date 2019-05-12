@@ -63,7 +63,7 @@ router.get('/unsubscribe/:email', (req, res, next) => {
 })
 
 router.get('/', (req, res, next) => {
-    res.send("Welcome to QAPP API visit<a href='https://qappdevtest.herokuapp.com/'>QAPP</a> for the interface.")
+    res.send("Welcome to QAPP API visit <a href='https://qappdevtest.herokuapp.com/'>QAPP</a> for the interface.")
 })
 
 module.exports = router
