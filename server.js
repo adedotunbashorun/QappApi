@@ -14,7 +14,7 @@ const port = config.app.port
 
 try {
     mongoose.set('useCreateIndex', true)
-    mongoose.connect(config.db.url, { useNewUrlParser: true }).then(() => { // if all is ok we will be here
+    mongoose.connect("mongodb://heroku_bmdx8f5p:c0jcg5l8lha8sf64pji0i3hfk6@ds155616.mlab.com:55616/heroku_bmdx8f5p", { useNewUrlParser: true }).then(() => { // if all is ok we will be here
         console.log("connected")
     }).catch(err => { // we will not be here...
         console.error('App starting error: Network Issue')
