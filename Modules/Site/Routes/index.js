@@ -62,4 +62,8 @@ router.get('/unsubscribe/:email', (req, res, next) => {
     ExtraController.deactivateAlertEmail(req, res, next)
 })
 
+router.get('/', (req, res, next) => {
+    res.send("Welcome to QAPP API visit https://qappdevtest.herokuapp.com/ for the interface")
+})
+
 module.exports = router
