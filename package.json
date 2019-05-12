@@ -1,0 +1,46 @@
+{
+  "name": "qapp",
+  "version": "1.0.0",
+  "description": "qapp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "local": "nodemon -r dotenv/config server.js"
+  },
+  "keywords": [
+    "modular-express",
+    "express",
+    "modular",
+    "mongodb",
+    "mongo",
+    "nodejs"
+  ],
+  "author": "adedotun <adedotunolawale@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.5",
+    "mongoose-unique-validator": "^2.0.3",
+    "morgan": "^1.9.1",
+    "node-cron": "^2.0.3",
+    "nodemailer": "^4.6.8",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "nodemon": "^1.19.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
+  },
+  "engines": {
+    "node": ">= 8.11.3",
+    "npm": ">= 6.4.0"
+  }
+}
