@@ -304,7 +304,7 @@ Activity.scheduleTime = () =>{
             })
            
             try {
-                Category.find({}).then((categories) => {
+                Category.find({}).sort('createdAt').limit(2).then((categories) => {
                     for (let i = 0; i < categories.length; ++i) {
                         let schedule_date = randomDate(new Date(), new Date(Date.now() + 12096e5), 9, 10)
                         let date = schedule_date.getFullYear() + '-' + (schedule_date.getMonth() + 1) + '-' + schedule_date.getDate()
