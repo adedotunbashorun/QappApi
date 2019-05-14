@@ -2,11 +2,12 @@ let express = require('express')
 let morgan = require('morgan')
 let path = require('path')
 let mongoose = require('mongoose')
-// let cors = require('./Middleware/cors')
+let corsMiddleware = require('./Middleware/cors')
 let bodyParser = require('body-parser')
 let cors = require('cors')
 const config = require('./config')
 app = express()
+require('./functions/cronJob')
 
 var passport = require('passport')
 
@@ -29,9 +30,9 @@ require('./passport-config')
 
 app.use(passport.initialize())
 
-app.use(cors({
-    origin: ['https://qappdevtest.herokuapp.com', 'http://localhost:3000'],
-    credentials: false
+app.use(cors({ 
+    origin: ['https://qappdevtest.herokuapp.com', 'http://qappdevtest.herokuapp.com', 'http://localhost:3000'],
+    credentials: true
 }))
 
 //middleware for login your request

@@ -1,7 +1,5 @@
 'use strict'
-let cors = require('cors')
-
-module.exports = cors({
+module.exports = {
     /*
     |--------------------------------------------------------------------------
     | Origin
@@ -17,7 +15,7 @@ module.exports = cors({
     | Function - Receives the current origin and should return one of the above values.
     |
     */
-    origin: ['http://localhost:3000'],
+    origin: ['https://qappdevtest.herokuapp.com', 'http://qappdevtest.herokuapp.com', 'http://localhost:3000'],
 
     /*
     |--------------------------------------------------------------------------
@@ -85,4 +83,4 @@ module.exports = cors({
     |
     */
     maxAge: 90
-});
+};

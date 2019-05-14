@@ -39,6 +39,18 @@ class QuestionController {
         }
     }
 
+    static getCategoryQuestion(req, res, next) {
+        try {
+            Question.find({ category_id: req.params.category_id}, null, { sort: { 'createdAt': -1 } }).then((questions) => {
+                return res.status(201).json({ questions: questions })
+            }, (error) => {
+                return res.status(501).json({ "success": false, "message": error })
+            })
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+    }
+
     static getOne(req, res, next) {
         try {
             Question.findOne({ _id: req.params.id, deleted_at: null }).populate('category_id').then((question) => {

@@ -30,7 +30,8 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     is_active: { type: Boolean, required: true, default: false },
     temporarytoken: { type: String, default: null },
-    deleted_at: { type: Date, default: null }
+    deleted_at: { type: Date, default: null },
+    is_scheduled: { type: Boolean, default: false }
 }, { timestamps: true })
 
 UserSchema.statics.hashPassword = function hashPassword(password) {

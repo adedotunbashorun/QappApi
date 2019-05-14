@@ -46,12 +46,12 @@ router.get('/contact/all', (req, res, next) => {
     ContactController.getAll(req, res, next)
 })
 
-router.get('/counts/:user_id', [Guard.isValidUser], (req, res, next) => {
-    ExtraController.countUserDoc(req, res, next)
+router.get('/schedules/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ActivityController.getUserSchedule(req, res, next)
 })
 
-router.get('/counts', [Guard.isValidUser], (req, res, next) => {
-    ExtraController.countAllDoc(req, res, next)
+router.get('/schedules', [Guard.isValidUser], (req, res, next) => {
+    ActivityController.getAllSchedule(req, res, next)    
 })
 
 router.post('/email_alert', (req, res, next) => {

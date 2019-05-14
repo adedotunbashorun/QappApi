@@ -17,6 +17,10 @@ router.get('/questions', [Guard.isValidUser], (req, res, next) => {
     QuestionController.getAll(req, res, next)
 })
 
+router.get('/questions/:category_id', [Guard.isValidUser], (req, res, next) => {
+    QuestionController.getCategoryQuestion(req, res, next)
+})
+
 router.get('/question/:id', [Guard.isValidUser], (req, res, next) => {
     QuestionController.getOne(req, res, next)
 })
