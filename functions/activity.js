@@ -266,6 +266,8 @@ Activity.scheduleTime = () => {
                                                     throw new Error("date exist");
                                                 }
 
+                                            }).catch(err =>{
+                                                console.log(err)
                                             })
                                         }
                                     })

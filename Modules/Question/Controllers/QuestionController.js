@@ -4,7 +4,7 @@ const Question = require('../Models/Question')
 class QuestionController {    
     static create(req, res, next) {
         try {
-            if (!req.body.category_id) {
+            if (!req.body.category_id || req.body.category_id != null) {
                 res.status(422).json({ 'error': 'Please provide category of question' })
             }
             if (!req.body.subject) {
