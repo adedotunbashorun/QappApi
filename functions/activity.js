@@ -62,13 +62,13 @@ Activity.html = (data) => {
 }
 
 const html = (data) =>{
-    return '<div id="content" style="background-color: #1D4BB7width:100%">' +
+    return '<div id="content" style="background-color: #1D4BB7;width:100%;">' +
         '<nav>' +
         '<div class="container-fluid">' +
-        '<span><a href="https://qappdevtest.herokuapp.com"><img src="https://qappdevtest.herokuapp.com/images/Blueform_LOGO_MARK_COLORED_NO_BG.png" style="width: 120px height: 45px padding:10px" class="img-responsive"></a></span>' +
+        '<span><a href="https://qappdevtest.herokuapp.com"><img src="https://qappdevtest.herokuapp.com/images/Blueform_LOGO_MARK_COLORED_NO_BG.png" style="width: 80px; height: 45px; padding:10px" class="img-responsive"><h3>QAPP</h3></a></span>' +
         '</div>' +
         '</nav>' +
-        '<div style="background-color: #fefefepadding:20pxcolor:#000">' + data + '</div>' +
+        '<div style="background-color: #fefefe;padding:20px;color:#000;">' + data + '</div>' +
         '</div>'
 }
 
@@ -192,7 +192,6 @@ const Sms = (number, message) => {
 
 Activity.sendScheduleMessage = async () =>{
     try {
-
         Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning wale'))
         Email(data = { email: ' aadum@coronams.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
         Schedule.find({ status: { $ne: true}}).then((schedules) =>{
@@ -204,7 +203,7 @@ Activity.sendScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms([user.phone],question.description);
+                                Sms(["'"+user.phone+"'"],question.description);
                                 console.log('sms')
                             }else{
                                 Email(user, question.category_id.name, html(question.description))
@@ -221,6 +220,8 @@ Activity.sendScheduleMessage = async () =>{
                     })
                 }
             }
+        }).catch(err => {
+            throw new Error(err)
         })
     } catch (error) {
         console.log()
