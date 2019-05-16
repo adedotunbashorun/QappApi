@@ -26,7 +26,7 @@ UserSeeder.seedUser = (req, res) => {
         })
 
         // seeded!
-        return res.status(201).json({ msg: 'User Seeded', user: user })
+        return res.status(201).json({ msg: 'User Seeded' })
     } catch (err) {
         return res.status(422).json({ error: err, msg: err.message })
     }
