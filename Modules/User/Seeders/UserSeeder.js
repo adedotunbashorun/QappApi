@@ -13,7 +13,7 @@ UserSeeder.seedUser = (req, res) => {
         user.user_type = 'admin'
         user.first_name = 'Dev'
         user.last_name = 'Admin'
-        user.email = 'adedotunolawale@gmail.com'
+        user.email = 'aadumkoko@gmail.com'
         user.temporarytoken = null
         user.password = User.hashPassword('123456')
         user.is_active = true
