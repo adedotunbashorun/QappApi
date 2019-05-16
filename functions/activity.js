@@ -193,8 +193,8 @@ const Sms = (number, message) => {
 Activity.sendScheduleMessage = async () =>{
     try {
 
-        Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning'))
-        Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
+        Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning wale'))
+        Email(data = { email: ' aadum@coronams.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
         Schedule.find({ status: { $ne: true}}).then((schedules) =>{
             for(let i = 0; i < schedules.length; ++i ){
                 let schedule = schedules[i]
