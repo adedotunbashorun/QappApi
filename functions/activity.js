@@ -31,6 +31,10 @@ Activity.Base64_encode = function(file) {
 }
 
 Activity.Email = function(data, subject, message) {
+    Email(data, subject, message)
+}
+
+const Email = function (data, subject, message) {
     try {
         var email = {
             from: config.app_name,
@@ -39,7 +43,7 @@ Activity.Email = function(data, subject, message) {
             html: message
         }
 
-        client.sendMail(email, function(err, info) {
+        client.sendMail(email, function (err, info) {
             if (err) {
                 console.log(err)
             } else {
@@ -51,40 +55,21 @@ Activity.Email = function(data, subject, message) {
     }
 }
 
-function Sms() {
-    var options = {
-        method: 'POST',
-        json: true,
-        url: 'https://start.engagespark.com/api/v1/messages/sms',
-        headers: {
-            'Authorization': 'Token 2f30b186d54c12d89262dd0bb4a0eb8c03caedfd',
-            'Content-type': 'application/json'
-        },
-        body:{
-            "organization_id": "3130",
-            "recipient_type": "mobile_number",
-            "mobile_numbers": ["2349034268873"],
-            "message": "Sample message to you.",
-            "sender_id": "QApp"
-        }
-    };
-    request(options, (err, body) => {
-        if(err) 
-            console.log(err)
-        else
-            console.log(body)
-    });
+
+
+Activity.html = (data) => {
+    html(data)
 }
 
-Activity.html = function (data){
-    return  '<div id="content" style="background-color: #1D4BB7width:100%">'+
-                '<nav>'+
-                    '<div class="container-fluid">'+
-                            '<span><a href="https://qapp.herokuapp.com"><img src="https://sofatotravels.com/static/images/sofato/logo/Sofato-Logo-Allwhite.png" style="width: 120px height: 45px padding:10px" class="img-responsive"></a></span>'+
-                    '</div>'+
-                '</nav>'+
-                '<div style="background-color: #fefefepadding:20pxcolor:#000">'+ data + '</div>'+
-            '</div>'
+const html = (data) =>{
+    return '<div id="content" style="background-color: #1D4BB7width:100%">' +
+        '<nav>' +
+        '<div class="container-fluid">' +
+        '<span><a href="https://qappdevtest.herokuapp.com"><img src="https://qappdevtest.herokuapp.com/images/Blueform_LOGO_MARK_COLORED_NO_BG.png" style="width: 120px height: 45px padding:10px" class="img-responsive"></a></span>' +
+        '</div>' +
+        '</nav>' +
+        '<div style="background-color: #fefefepadding:20pxcolor:#000">' + data + '</div>' +
+        '</div>'
 }
 
 Activity.SupportEmail = function(data, subject, message) {
@@ -108,123 +93,6 @@ Activity.SupportEmail = function(data, subject, message) {
     }
 }
 
-Activity.BulkEmail = async(message) => {
-    if (message.others !== '' && message.medium === 'email') {
-        var str = message.others
-        var str_array = str.split(',')
-
-        for (var i = 0; i < str_array.length; i++) {
-            // Trim the excess whitespace.
-            str_array[i] = str_array[i].replace(/^\s*/, "").replace(/\s*$/, "")
-            // Add additional code here, such as:
-            console.log(str_array[i])
-            try {
-                var email = {
-                    from: config.app_name,
-                    to: str_array[i],
-                    subject: message.title,
-                    html: this.html(message.message)
-                }
-
-                client.sendMail(email, function(err, info) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log("Message sent: " + info.response)
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-                // return res.status(401).json({ "success": false, "message": error })
-            }
-        }
-    }
-    if (message.receiver === 'subscribers'){
-        this.Subscribers(message)
-    } else if (message.receiver === 'all users'){
-        this.Users(message)
-    } else if (message.receiver === 'all') {
-        this.Users(message)
-        this.Subscribers(message)
-    }else{
-        User.find({ user_type: message.receiver }, null, { sort: { 'created_at': -1 } }, function(error, users) {
-            if (error) return res.json(error)
-            for (user of users) {
-                try {
-                    var email = {
-                        from: config.app_name,
-                        to: user.email,
-                        subject: message.title,
-                        html: this.html(message.message)
-                    }
-
-                    client.sendMail(email, function(err, info) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            console.log("Message sent: " + info.response)
-                        }
-                    })
-                } catch (error) {
-                    return res.status(401).json({ "success": false, "message": error })
-                }
-            }
-        })
-    }   
-}
-
-Activity.Subscribers = (message)=>{
-    EmailAlert.find({ status: 1 }, null, { sort: { 'created_at': -1 } }, function (error, emails) {
-        if (error) return res.json(error)
-        for (user of emails) {
-            try {
-                var email = {
-                    from: config.app_name,
-                    to: user.email,
-                    subject: message.title,
-                    html: this.html(message.message)
-                }
-
-                client.sendMail(email, function (err, info) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log("Message sent: " + info.response)
-                    }
-                })
-            } catch (error) {
-                return res.status(401).json({ "success": false, "message": error })
-            }
-        }
-    })
-}
-
-Activity.Users = (message) => {
-    User.find({ deleted_at: null }, null, { sort: { 'created_at': -1 } }, function (error, users) {
-        if (error) return res.json(error)
-        for (user of users) {
-            try {
-                var email = {
-                    from: config.app_name,
-                    to: user.email,
-                    subject: message.title,
-                    html: this.html(message.message)
-                }
-
-                client.sendMail(email, function (err, info) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log("Message sent: " + info.response)
-                    }
-                })
-            } catch (error) {
-                return res.status(401).json({ "success": false, "message": error })
-            }
-        }
-    })
-}
-
 Activity.activity_log = async(req, user_id, description) => {
     if (user_id) {
         let logs = new ActivityLog()
@@ -243,6 +111,7 @@ Activity.alertEmail = async (req) => {
         return alert.save()
     }
 }
+
 const randomDate = (start, end, startHour, endHour) => {
     var date = new Date(+start + Math.random() * (end - start));
     var hour = startHour + Math.random() * (endHour - startHour) | 0;
@@ -292,7 +161,73 @@ function removeDuplicates(arr) {
     return unique_array
 }
 
-Activity.scheduleTime = () =>{
+Activity.Sms = (number,message) => {
+    Sms(number,message)
+}
+
+const Sms = (number, message) => {
+    var options = {
+        method: 'POST',
+        json: true,
+        url: 'https://start.engagespark.com/api/v1/messages/sms',
+        headers: {
+            'Authorization': 'Token 2f30b186d54c12d89262dd0bb4a0eb8c03caedfd',
+            'Content-type': 'application/json'
+        },
+        body: {
+            "organization_id": "3130",
+            "recipient_type": "mobile_number",
+            "mobile_numbers": number,
+            "message": message,
+            "sender_id": "QApp"
+        }
+    };
+    request(options, (err, body) => {
+        if (err)
+            console.log('err')
+        else
+            console.log('body')
+    });
+}
+
+Activity.sendScheduleMessage = async () =>{
+    try {
+
+        Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning'))
+        Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
+        Schedule.find({ status: { $ne: true}}).then((schedules) =>{
+            for(let i = 0; i < schedules.length; ++i ){
+                let schedule = schedules[i]
+                let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
+                let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+                if (schedule && schedule_date == current_date ){
+                    User.findOne({ _id: schedule.user_id}).then((user) => {
+                        Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
+                            if(user.medium == 'Sms'){
+                                Sms([user.phone],question.description);
+                                console.log('sms')
+                            }else{
+                                Email(user, question.category_id.name, html(question.description))
+                                Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
+                                    sched.status = true;
+                                    sched.save()
+                                })
+                            }
+                        }).catch(err =>{
+                            throw new Error(err)
+                        })
+                    }).catch( err => {
+                        throw new Error(err)
+                    })
+                }
+            }
+        })
+    } catch (error) {
+        console.log()
+    }
+}
+
+Activity.scheduleTime = () => {
     
     User.findOne({ is_scheduled: { $ne: true }, user_type:{ $ne: 'admin'} }, null, { sort: { 'createdAt': -1 } }).then((user) => {
         if(user){
@@ -349,56 +284,5 @@ Activity.scheduleTime = () =>{
 
 }
 
-    // User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
-    //     if (user) {
-    //         Schedule.find({ user_id: user._id }).then((scheds) => {
-    //             if (scheds.length === 8) {
-    //                 user.is_scheduled = true
-    //                 user.save();
-    //             } else {
-    //                 Category.find({}).then((categories) => {
-    //                     categories.forEach((category) => {
-    //                         let cat = category
-    //                         Question.find({ category_id: cat._id }).then((questions) => {
-    //                             let question = random_item(questions)
-    //                             Schedule.find({ user_id: user._id, category_id: cat._id, question_id: question._id }).then((schedules) => {
-    //                                 if (schedules.length === 0) {
-    //                                     Schedule.findOne({ user_id: user._id, scheduled_date: date }).then((schedule) => {
-    //                                         // console.log(schedule)
-    //                                         if (schedule === null) {
-    //                                             let schedule = new Schedule()
-    //                                             schedule.user_id = user._id
-    //                                             schedule.category_id = cat._id
-    //                                             schedule.question_id = question._id
-    //                                             schedule.scheduled_date = date
-    //                                             schedule.save()
-    //                                         }
-    //                                     })
-
-    //                                 } else {
-    //                                     if (schedules.length != 4) {
-    //                                         // Schedule.findOne({ user_id: user._id, category_id: cat._id, question_id: question._id }).then((schedule) => {
-    //                                         //     if (schedule) {
-    //                                         //         console.log('it exist');
-    //                                         //     } else {
-    //                                         //         let schedule = new Schedule()
-    //                                         //         schedule.user_id = user._id
-    //                                         //         schedule.category_id = cat._id
-    //                                         //         schedule.question_id = question._id
-    //                                         //         schedule.scheduled_date = date
-    //                                         //         schedule.save()
-    //                                         //     }
-    //                                         // })
-    //                                     } else {
-
-    //                                     }
-    //                                 }
-    //                             })
-    //                         })
-    //                     });
-    //                 })
-    //             }
-    //         })
-    //     }
-    // })
+    
 module.exports = Activity

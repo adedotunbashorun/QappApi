@@ -63,6 +63,5 @@ app.use('/api', categoryRoutes)
 app.use('/api', questionRoutes)
 app.use('/api', siteRoutes)
 app.use('/api', bulkRoute)
-
 app.listen(port)
 console.log('server started ' + port)

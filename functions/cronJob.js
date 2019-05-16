@@ -12,7 +12,7 @@ cron.schedule("*/01 * * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 2")
     try {
-        Activity.scheduleTime();        
+        Activity.scheduleTime()  
     } catch (err) {
         console.log(err)
     }
@@ -22,7 +22,7 @@ cron.schedule("00 08 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 3")
     try {
-        // Activity.scheduleTime();
+        Activity.sendScheduleMessage()
     } catch (err) {
         console.log(err)
     }
