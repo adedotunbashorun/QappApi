@@ -248,26 +248,36 @@ Activity.scheduleTime = () => {
                             let result = random_item(questions)
                             let cat = categories[i]
                             // console.log(result)
+                            // console.log(new Date(date))
                             Schedule.find({ user_id: user._id, category_id: cat._id }).then((schedules) => {
-                                console.log(schedules.length)
                                 if (schedules.length < 4) {
                                     Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
                                         if (schedule == null) {
                                             Schedule.find({ user_id: user._id}).then((dates) => {
-                                                console.log(dates,'date')
-                                                for(let i = 0; i <= dates.length; ++l){
-                                                    let data = dates[i]
-                                                    let db_date = data.scheduled_date.getFullYear() + '-' + (data.scheduled_date.getMonth() + 1) + '-' + data.scheduled_date.getDate()
-                                                    if( db_date == date){
-                                                        throw new Error("date exist");
-                                                    }else{
-                                                        let schedule = new Schedule()
-                                                        schedule.user_id = user._id
-                                                        schedule.category_id = result.category_id
-                                                        schedule.question_id = result._id
-                                                        schedule.scheduled_date = date
-                                                        schedule.save()
+                                                if (dates.length != 0){
+                                                    console.log(dates.length)
+                                                    for(let l = 0;l <= dates.length; ++l){
+                                                        let data = dates[l]
+                                                        let db_date = new Date(data.scheduled_date).getFullYear() + '-' + (new Date(data.scheduled_date).getMonth() + 1) + '-' + new Date(data.scheduled_date).getDate()
+                                                        if( db_date == date){
+                                                            console.log(db_date, date)
+                                                            continue
+                                                        }else{
+                                                            // let schedule = new Schedule()
+                                                            // schedule.user_id = user._id
+                                                            // schedule.category_id = result.category_id
+                                                            // schedule.question_id = result._id
+                                                            // schedule.scheduled_date = date
+                                                            // schedule.save()
+                                                        }
                                                     }
+                                                }else{
+                                                    let schedule = new Schedule()
+                                                    schedule.user_id = user._id
+                                                    schedule.category_id = result.category_id
+                                                    schedule.question_id = result._id
+                                                    schedule.scheduled_date = date
+                                                    schedule.save()
                                                 }
                                             }).catch(err =>{
                                                 console.log(err)
