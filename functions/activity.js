@@ -253,19 +253,22 @@ Activity.scheduleTime = () => {
                                 if (schedules.length < 4) {
                                     Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
                                         if (schedule == null) {
-                                            Schedule.findOne({ user_id: user._id, scheduled_date: date }).then((dates) => {
+                                            Schedule.find({ user_id: user._id}).then((dates) => {
                                                 console.log(dates,'date')
-                                                if (dates == null) {
-                                                    let schedule = new Schedule()
-                                                    schedule.user_id = user._id
-                                                    schedule.category_id = result.category_id
-                                                    schedule.question_id = result._id
-                                                    schedule.scheduled_date = date
-                                                    schedule.save()
-                                                } else {
-                                                    throw new Error("date exist");
+                                                for(let i = 0; i <= dates.length; ++l){
+                                                    let data = dates[i]
+                                                    let db_date = data.scheduled_date.getFullYear() + '-' + (data.scheduled_date.getMonth() + 1) + '-' + data.scheduled_date.getDate()
+                                                    if( db_date == date){
+                                                        throw new Error("date exist");
+                                                    }else{
+                                                        let schedule = new Schedule()
+                                                        schedule.user_id = user._id
+                                                        schedule.category_id = result.category_id
+                                                        schedule.question_id = result._id
+                                                        schedule.scheduled_date = date
+                                                        schedule.save()
+                                                    }
                                                 }
-
                                             }).catch(err =>{
                                                 console.log(err)
                                             })
