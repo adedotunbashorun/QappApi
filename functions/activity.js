@@ -229,16 +229,16 @@ Activity.sendScheduleMessage = async () =>{
 }
 
 Activity.scheduleTime = () => {
-    
-    User.findOne({ is_scheduled: { $ne: true }, user_type:{ $ne: 'admin'} }, null, { sort: { 'createdAt': -1 } }).then((user) => {
-        if(user){
+
+    User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
+        if (user) {
             Schedule.find({ user_id: user._id }).countDocuments().then(count => {
                 if (count == 8) {
                     user.is_scheduled = true
                     user.save()
                 }
             })
-           
+
             try {
                 Category.find({}).sort('createdAt').limit(2).then((categories) => {
                     for (let i = 0; i < categories.length; ++i) {
@@ -248,43 +248,30 @@ Activity.scheduleTime = () => {
                             let result = random_item(questions)
                             let cat = categories[i]
                             // console.log(result)
-                            // console.log(new Date(date))
                             Schedule.find({ user_id: user._id, category_id: cat._id }).then((schedules) => {
+                                console.log(schedules.length)
                                 if (schedules.length < 4) {
                                     Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
                                         if (schedule == null) {
-                                            Schedule.find({ user_id: user._id}).then((dates) => {
-                                                if (dates.length != 0){
-                                                    console.log(dates.length)
-                                                    for(let l = 0;l <= dates.length; ++l){
-                                                        let data = dates[l]
-                                                        let db_date = new Date(data.scheduled_date).getFullYear() + '-' + (new Date(data.scheduled_date).getMonth() + 1) + '-' + new Date(data.scheduled_date).getDate()
-                                                        if( db_date == date){
-                                                            console.log(db_date, date)
-                                                            continue
-                                                        }else{
-                                                            // let schedule = new Schedule()
-                                                            // schedule.user_id = user._id
-                                                            // schedule.category_id = result.category_id
-                                                            // schedule.question_id = result._id
-                                                            // schedule.scheduled_date = date
-                                                            // schedule.save()
-                                                        }
-                                                    }
-                                                }else{
+                                            Schedule.findOne({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
+                                                console.log(dates, 'date')
+                                                if (dates == null) {
                                                     let schedule = new Schedule()
                                                     schedule.user_id = user._id
                                                     schedule.category_id = result.category_id
                                                     schedule.question_id = result._id
                                                     schedule.scheduled_date = date
                                                     schedule.save()
+                                                } else {
+                                                    throw new Error("date exist");
                                                 }
-                                            }).catch(err =>{
-                                                console.log(err)
+
                                             })
                                         }
+                                    }).catch(err =>{
+                                        console.log(err)
                                     })
-                                }else{
+                                } else {
                                     console.log('completed')
                                 }
                             })
@@ -294,7 +281,7 @@ Activity.scheduleTime = () => {
             } catch (error) {
                 console.log(error)
             }
-            
+
         }
     })
 
