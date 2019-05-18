@@ -31,7 +31,7 @@ class ExtraController {
     }
 
     static getResponse(req, res, next) {        
-        Response.find({}).populate('schedule_id').then((responses) => {
+        Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').then((responses) => {
             return res.status(201).json({ responses: responses})
         }).catch(err => {
             return res.status(401).json(err)
