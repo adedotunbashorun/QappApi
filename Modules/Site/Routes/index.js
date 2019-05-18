@@ -8,7 +8,6 @@ const ContactController = require('../Controllers/ContactController')
 const ActivityController = require('../Controllers/ActivityController')
 const MailSettingsController = require('../Controllers/MailSettingsController')
 const SystemSettingsController = require('../Controllers/SettingsController')
-const Response = require('../Models/Response')
 
 
 router.post('/system/create', (req, res, next) => {
@@ -32,10 +31,7 @@ router.get('/activities', [Guard.isValidUser], (req, res, next) => {
 })
 
 router.get('/incomming/message',(req,res,next) =>{
-    let response = new Response()
-    response.data = req.query.message
-    response.save()
-    return res.status(201).json(response)
+    ExtraController.userResponse(req,res,next)
 })
 
 router.get('/my_activities/:user_id', [Guard.isValidUser], (req, res, next) => {

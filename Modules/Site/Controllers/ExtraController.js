@@ -5,8 +5,27 @@ const EmailAlert = require('../Models/Email')
 const User = require('../../User/Models/User')
 const Activity = require('../../../functions/activity')
 const result = {}
+const Response = require('../Models/Response')
+const Schedule = require('../Models/Schedule')
 
 class ExtraController {
+
+    static userResponse(req,res,next){
+        let str = req.query.message
+        let schedule = str.split(' ',1)
+        let response = new Response()
+        response.schedule_id = schedule[0]
+        response.phone = req.query.from
+        response.data = req.query.message
+        response.save()
+        Schedule.findOne({ _id: schedule[0]}).then((resp)=>{
+            resp.status = true
+            resp.save()
+        }).catch(err =>{
+            return res.status(401).json(err)
+        })
+        return res.status(201).json(response)        
+    }
 
     // static countUserDoc(req, res, next) {
     //     Support.find({ user_id: req.params.user_id }).countDocuments().then(count => {

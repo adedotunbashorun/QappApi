@@ -177,16 +177,16 @@ const Sms = (number, message) => {
         body: {
             "organization_id": "3130",
             "recipient_type": "mobile_number",
-            "mobile_numbers": number,
+            "mobile_numbers": [number],
             "message": message,
             "sender_id": "QApp"
         }
     };
     request(options, (err, body) => {
         if (err)
-            console.log('err')
+            console.log(err,'error')
         else
-            console.log('body')
+            console.log(body,'success')
     });
 }
 
@@ -203,10 +203,9 @@ Activity.sendScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms(["'"+user.phone+"'"],question.description);
-                                console.log('sms')
+                                Sms(user.phone, schedule._id+' '+question.subject + '\r\n' +question.description)
                             }else{
-                                Email(user, question.category_id.name, html(question.description))
+                                Email(user, question.category_id.name, html(question.subject+'\r\n'+question.description))
                                 Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
                                     sched.status = true;
                                     sched.save()
@@ -229,7 +228,6 @@ Activity.sendScheduleMessage = async () =>{
 }
 
 Activity.scheduleTime = () => {
-
     User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
         if (user) {
             Schedule.find({ user_id: user._id }).countDocuments().then(count => {
