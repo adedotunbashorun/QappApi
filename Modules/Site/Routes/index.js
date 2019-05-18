@@ -34,6 +34,10 @@ router.get('/incomming/message',(req,res,next) =>{
     ExtraController.userResponse(req,res,next)
 })
 
+router.get('/responses', (req, res, next) => {
+    ExtraController.getResponse(req, res, next)
+})
+
 router.get('/my_activities/:user_id', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getuserAll(req, res, next)
 })

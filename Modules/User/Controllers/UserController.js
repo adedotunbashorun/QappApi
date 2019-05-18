@@ -49,10 +49,23 @@ class UserController {
 
     static getAll(req, res, next) {
         try {
-            User.find({ deleted_at: null }, null, { sort: { 'created_at': -1 } }, function (error, users) {
+            User.find({ deleted_at: null }, null, { sort: { 'createdAt': -1 } }, function (error, users) {
                 if (error) return res.json(error)
                 (req.user) ? Activity.activity_log(req, req.user._id, 'View All Users') : ''
                 return res.json({ users: users })
+            })
+        } catch (error) {
+            return res.status(501).json({ error: error, msg: error.message })
+        }
+    }
+
+    static getAllSchedule(req, res, next) {
+        try {
+            User.find({ deleted_at: null }).sort('createdAt').populate('schedules').then((users) => {                
+                // (req.user) ? Activity.activity_log(req, req.user._id, 'View All Users') : ''
+                return res.json({ users: users })
+            }).catch(error =>{
+                if (error) return res.json(error)
             })
         } catch (error) {
             return res.status(501).json({ error: error, msg: error.message })

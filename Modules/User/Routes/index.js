@@ -9,6 +9,11 @@ const User = require('../Seeders/UserSeeder')
 router.patch('/user/update/:id', [Guard.isValidUser], (req, res, next) => {
     UserController.update(req, res, next)
 })
+
+router.get('/user/schedule', (req, res, next) => {
+    UserController.getAllSchedule(req, res)
+})
+
 router.get('/users', [Guard.isValidUser], (req, res, next) => {
     UserController.getAll(req, res, next)
 })
@@ -44,5 +49,7 @@ router.patch('/user/restore/:id', [Guard.isValidUser], (req, res, next) => {
 router.get('/seed/user', (req, res, next) => {
     User.seedUser(req, res)
 })
+
+
 
 module.exports = router

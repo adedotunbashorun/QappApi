@@ -13,18 +13,27 @@ class ExtraController {
     static userResponse(req,res,next){
         let str = req.query.message
         let schedule = str.split(' ',1)
-        let response = new Response()
-        response.schedule_id = schedule[0]
-        response.phone = req.query.from
-        response.data = req.query.message
-        response.save()
-        Schedule.findOne({ _id: schedule[0]}).then((resp)=>{
+        Schedule.findOne({ _id: schedule[0] }).then((resp) => {
+            let response = new Response()
+            response.schedule_id = schedule[0]
+            response.phone = req.query.from
+            response.data = req.query.message
+            response.save()
+        
             resp.is_reply = true
             resp.save()
         }).catch(err =>{
             return res.status(401).json(err)
         })
         return res.status(201).json('successfully received')        
+    }
+
+    static getResponse(req, res, next) {        
+        Response.find({}).populate('schedule_id').then((responses) => {
+            return res.status(201).json({ responses: responses})
+        }).catch(err => {
+            return res.status(401).json(err)
+        })
     }
 
     // static countUserDoc(req, res, next) {

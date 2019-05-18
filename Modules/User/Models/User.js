@@ -32,7 +32,14 @@ const UserSchema = new Schema({
     temporarytoken: { type: String, default: null },
     deleted_at: { type: Date, default: null },
     is_scheduled: { type: Boolean, default: false }
-}, { timestamps: true })
+}, { timestamps: true }, { toJSON: { virtuals: true } })
+
+UserSchema.virtual('schedules', {
+    ref: 'Schedule',
+    localField: '_id',
+    foreignField: 'user_id',
+    justOne: false // set true for one-to-one relationship
+})
 
 UserSchema.statics.hashPassword = function hashPassword(password) {
     return bcrypt.hashSync(password, 10)
