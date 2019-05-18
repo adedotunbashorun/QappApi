@@ -19,6 +19,7 @@ class AuthenticationController{
             user.first_name = (req.body.first_name) ? req.body.first_name : ''
             user.last_name = req.body.last_name
             user.medium = req.body.medium
+            user.phone = req.body.phone
             user.email = req.body.email
             user.password = User.hashPassword(req.body.password)
             user.temporarytoken = crypto.randomBytes(20).toString('hex')

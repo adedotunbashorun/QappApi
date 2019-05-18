@@ -8,7 +8,8 @@ const ScheduleSchema = new Schema({
     category_id: { type: Schema.ObjectId, ref: 'Category', default: null },
     question_id: { type: Schema.ObjectId, ref: 'Question', default: null },
     scheduled_date: { type: Date, required: true },
-    status:{type:Boolean, default: false}
+    status:{type:Boolean, default: false},
+    is_reply: { type: Boolean, default: false }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Schedule', ScheduleSchema)

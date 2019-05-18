@@ -19,7 +19,7 @@ class ExtraController {
         response.data = req.query.message
         response.save()
         Schedule.findOne({ _id: schedule[0]}).then((resp)=>{
-            resp.status = true
+            resp.is_reply = true
             resp.save()
         }).catch(err =>{
             return res.status(401).json(err)
