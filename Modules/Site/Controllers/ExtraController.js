@@ -24,7 +24,7 @@ class ExtraController {
         }).catch(err =>{
             return res.status(401).json(err)
         })
-        return res.status(201).json(response)        
+        return res.status(201).json('successfully received')        
     }
 
     // static countUserDoc(req, res, next) {

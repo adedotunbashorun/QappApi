@@ -204,6 +204,10 @@ Activity.sendScheduleMessage = async () =>{
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
                                 Sms(user.phone, schedule._id+' '+question.subject + '\r\n' +question.description)
+                                Schedule.findOne({ _id: schedule._id }).then((sched) => {
+                                    sched.status = true;
+                                    sched.save()
+                                })
                             }else{
                                 Email(user, question.category_id.name, html(question.subject+'\r\n'+question.description))
                                 Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
