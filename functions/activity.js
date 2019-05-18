@@ -254,7 +254,6 @@ Activity.scheduleTime = () => {
                                     Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
                                         if (schedule == null) {
                                             Schedule.findOne({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
-                                                console.log(dates, 'date')
                                                 if (dates == null) {
                                                     let schedule = new Schedule()
                                                     schedule.user_id = user._id
@@ -263,9 +262,11 @@ Activity.scheduleTime = () => {
                                                     schedule.scheduled_date = date
                                                     schedule.save()
                                                 } else {
-                                                    throw new Error("date exist");
+                                                    throw "date exist"
                                                 }
 
+                                            }).catch(err =>{
+                                                console.log(err.message)
                                             })
                                         }
                                     }).catch(err =>{
