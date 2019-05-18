@@ -15,7 +15,9 @@ class ExtraController {
         let schedule = str.split(' ',1)
         Schedule.findOne({ _id: schedule[0] }).then((resp) => {
             let response = new Response()
-            response.schedule_id = schedule[0]
+            response.schedule_id = resp._id
+            response.user_id = resp.user_id
+            response.question_id = resp.question_id
             response.phone = req.query.from
             response.data = req.query.message
             response.save()
