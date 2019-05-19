@@ -52,6 +52,42 @@ class activitytController {
         }
     }
 
+    static getUserScheduleTotal(req, res, next) {
+        try {
+            Schedule.find({ user_id: req.params.user_id }).count().then((count) => {
+                return res.status(201).json({ count: count })
+            }, (error) => {
+                return res.status(501).json({ "success": false, "message": error })
+            })
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+    }
+
+    static getUserScheduleTotalSent(req, res, next) {
+        try {
+            Schedule.find({ user_id: req.params.user_id, status: true }).count().then((count) => {
+                return res.status(201).json({count: count})
+            }, (error) => {
+                return res.status(501).json({ "success": false, "message": error })
+            })
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+    }
+
+    static getUserScheduleTotalReplied(req, res, next) {
+        try {
+            Schedule.find({ user_id: req.params.user_id, is_reply: true }).count().then((count) => {
+                return res.status(201).json({ count: count })
+            }, (error) => {
+                return res.status(501).json({ "success": false, "message": error })
+            })
+        } catch (err) {
+            return res.status(500).json(err)
+        }
+    }
+
     static getuserAll(req, res, next) {
         try {
             Activity.find({ user_id: req.params.user_id }).sort('-createdAt').populate("user_id").then((activities) => {

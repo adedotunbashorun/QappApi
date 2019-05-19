@@ -58,6 +58,18 @@ router.get('/schedules/:user_id', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getUserSchedule(req, res, next)
 })
 
+router.get('/schedules/total/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ActivityController.getUserScheduleTotal(req, res, next)
+})
+
+router.get('/schedules/sent/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ActivityController.getUserScheduleTotalSent(req, res, next)
+})
+
+router.get('/schedules/replied/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ActivityController.getUserScheduleTotalReplied(req, res, next)
+})
+
 router.get('/schedules', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getAllSchedule(req, res, next)    
 })

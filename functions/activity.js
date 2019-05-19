@@ -255,8 +255,8 @@ Activity.scheduleTime = () => {
                                 if (schedules.length < 4) {
                                     Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
                                         if (schedule == null) {
-                                            Schedule.findOne({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
-                                                if (dates == null) {
+                                            Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
+                                                if (dates.length == 0) {
                                                     let schedule = new Schedule()
                                                     schedule.user_id = user._id
                                                     schedule.category_id = result.category_id
