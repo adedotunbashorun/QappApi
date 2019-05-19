@@ -28,7 +28,7 @@ cron.schedule("* 07 * * *", function () {
     }
 })
 
-cron.schedule("55 21 * * *", function () {
+cron.schedule("55 20 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 4")
     try {
