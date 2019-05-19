@@ -203,17 +203,52 @@ Activity.sendScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms(user.phone, schedule._id+' '+question.subject + '\r\n' +question.description)
+                                Sms(user.phone, schedule._id+'\r\n'+question.subject + '\r\n' +question.description)
                                 Schedule.findOne({ _id: schedule._id }).then((sched) => {
                                     sched.status = true;
                                     sched.save()
                                 })
                             }else{
-                                Email(user, question.category_id.name, html(question.subject+'\r\n'+question.description))
+                                Email(user, question.category_id.name, html(schedule._id + '\r\n '+question.subject+'\r\n'+question.description))
                                 Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
                                     sched.status = true;
                                     sched.save()
                                 })
+                            }
+                        }).catch(err =>{
+                            throw new Error(err)
+                        })
+                    }).catch( err => {
+                        throw new Error(err)
+                    })
+                }
+            }
+        }).catch(err => {
+            throw new Error(err)
+        })
+    } catch (error) {
+        console.log()
+    }
+}
+
+Activity.unrepliedScheduleMessage = async () =>{
+    try {
+        // Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning wale'))
+        // Email(data = { email: ' aadum@coronams.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
+        Schedule.find({ is_reply: { $ne: true}}).then((schedules) =>{
+            for(let i = 0; i < schedules.length; ++i ){
+                let schedule = schedules[i]
+                let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
+                let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+                if (schedule && schedule_date == current_date ){
+                    User.findOne({ _id: schedule.user_id}).then((user) => {
+                        Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
+                            if(user.medium == 'Sms'){
+                                Sms(user.phone, "Good Evening " + user.title + ' ' + user.last_name + '\r\n We are yet to recieve a response from you regarding the task assign to you, please any issues.\r\n Thank you.')
+                                
+                            }else{
+                                Email(user, question.category_id.name, html("Good Evening "+ user.title + ' '+ user.last_name+'\r\n We are yet to recieve a response from you regarding the task assign to you, please any issues.\r\n Thank you.'))
+                                
                             }
                         }).catch(err =>{
                             throw new Error(err)

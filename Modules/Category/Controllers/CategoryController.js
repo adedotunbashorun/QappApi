@@ -34,7 +34,7 @@ class CategoryController {
                 return res.status(501).json({ "success": false, "message": error })
             })
         } catch (err) {
-            return res.status(500).json(err)
+            return res.status(500).json({ error: err, msg: err.message})
         }
     }
 

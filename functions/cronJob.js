@@ -27,3 +27,13 @@ cron.schedule("* 07 * * *", function () {
         console.log(err)
     }
 })
+
+cron.schedule("55 21 * * *", function () {
+    console.log("---------------------")
+    console.log("Running Cron Job 4")
+    try {
+        Activity.unrepliedScheduleMessage()
+    } catch (err) {
+        console.log(err)
+    }
+})
