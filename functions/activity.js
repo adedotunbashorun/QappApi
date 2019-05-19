@@ -179,7 +179,7 @@ const Sms = (number, message) => {
             "recipient_type": "mobile_number",
             "mobile_numbers": [number],
             "message": message,
-            "sender_id": "QApp"
+            "sender_id": "+12044800573"
         }
     };
     request(options, (err, body) => {
