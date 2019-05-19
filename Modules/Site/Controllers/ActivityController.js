@@ -19,6 +19,17 @@ class activitytController {
 
     static getAllSchedule(req, res, next) {
         try {
+            // Schedule.aggregate([
+            //     {
+            //         $group: {
+            //             _id: '$user_id',
+            //             questions: { $push: "$question_id" },
+            //             count: { $sum: 1 }
+            //         }
+            //     }
+            // ]).then((schedules) =>{
+            //     return res.status(201).json({ schedules: schedules })
+            // })
             Schedule.find({}).sort('-createdAt').populate("user_id").populate("category_id").populate("question_id").then((schedules) => {
                 return res.status(201).json({ schedules: schedules })
             }, (error) => {

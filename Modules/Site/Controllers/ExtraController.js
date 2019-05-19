@@ -18,7 +18,7 @@ class ExtraController {
             response.schedule_id = resp._id
             response.user_id = resp.user_id
             response.question_id = resp.question_id
-            response.phone = req.query.from
+            response.from = req.query.from
             response.data = req.query.message
             response.save()
         
