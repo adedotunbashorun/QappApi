@@ -1,6 +1,8 @@
 'use strict'
 
 const Activity = require('../../../functions/activity')
+const Schedule = require('../../Site/Models/Schedule')
+const Response = require('../../Site/Models/Response')
 const File = require('../../../functions/file')
 const User = require('../Models/User')
 
@@ -136,12 +138,15 @@ class UserController {
         try {
             User.findOneAndRemove({ _id: req.params.id, deleted_at: null }, function (error, user) {
                 if (error) {
-
                     (req.user) ? Activity.activity_log(req, req.user._id, 'error deleting a user') : ''
                     return res.status(501).json({ error: error, msg: error.message })
                 } else {
+                    if(user){
+                        Schedule.find({ user_id: req.params.id}).remove().exec()
+                        Response.find({ user_id: req.params.id }).remove().exec()
+                    }                                     
                     (req.user) ? Activity.activity_log(req, req.user._id, 'deleted a user') : ''
-                    return res.json({ user: user, msg: user.first_name + " was deleted successfully" })
+                    return res.json({ msg:"user was deleted successfully" })
                 }
             })
         } catch (error) {

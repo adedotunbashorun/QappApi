@@ -1,5 +1,7 @@
 'use strict'
 const Question = require('../Models/Question')
+const Schedule = require('../../Site/Models/Schedule')
+const Response = require('../../Site/Models/Response')
 
 class QuestionController {    
     static create(req, res, next) {
@@ -81,15 +83,16 @@ class QuestionController {
 
     static delete(req, res, next) {
         try {
-            Question.findOneAndRemove({ _id: req.params.id, deleted_at: null }, function (error, question) {
-                if (error) {
-
-                    (req.user) ? Activity.activity_log(req, req.user._id, 'error deleting a question') : ''
-                    return res.status(501).json({ error: error, msg: error.message })
-                } else {
-                    (req.user) ? Activity.activity_log(req, req.user._id, 'deleted a question') : ''
-                    return res.json({ question: question, msg: question.subject + " was deleted successfully" })
-                }
+            Question.findOneAndRemove({ _id: req.params.id, deleted_at: null }).then( (question) => {
+                if (question) {
+                    Schedule.find({ question_id: req.params.id }).remove().exec()
+                    Response.find({ question_id: req.params.id }).remove().exec()
+                }  
+                (req.user) ? Activity.activity_log(req, req.user._id, 'deleted a question') : ''
+                return res.json({ msg:"question was deleted successfully" })                
+            }).catch(error =>{
+                (req.user) ? Activity.activity_log(req, req.user._id, 'error deleting a question') : ''
+                return res.status(501).json({ error: error, msg: error.message })
             })
         } catch (error) {
             return res.status(501).json({ error: error, msg: error.message })

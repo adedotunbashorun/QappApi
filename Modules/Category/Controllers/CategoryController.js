@@ -1,5 +1,7 @@
 'use strict'
 const Category = require('../Models/Category')
+const Schedule = require('../../Site/Models/Schedule')
+const Question = require('../../Question/Models/Question')
 const Activity = require('../../../functions/activity')
 
 class CategoryController {    
@@ -67,16 +69,17 @@ class CategoryController {
     }
 
     static delete(req, res, next) {
-        try {
-            Category.findOneAndRemove({ _id: req.params.id, deleted_at: null }, function (error, category) {
-                if (error) {
-
-                    (req.user) ? Activity.activity_log(req, req.user._id, 'error deleting a user') : ''
-                    return res.status(501).json({ error: error, msg: error.message })
-                } else {
-                    (req.user) ? Activity.activity_log(req, req.user._id, 'deleted a user') : ''
-                    return res.json({ category: category, msg: category.name + " was deleted successfully" })
-                }
+        try {                     
+            Category.findOneAndRemove({ _id: req.params.id}).then( category =>{   
+                if (category) {
+                    Schedule.find({ category_id: req.params.id }).remove().exec()
+                    Question.find({ category_id: req.params.id }).remove().exec()
+                }                            
+                (req.user) ? Activity.activity_log(req, req.user._id, 'deleted a user') : ''
+                return res.json({ msg: "category was deleted successfully" })
+            }).catch(error=>{
+                (req.user) ? Activity.activity_log(req, req.user._id, 'error deleting a user') : ''
+                return res.status(501).json({ error: error, msg: error.message })
             })
         } catch (error) {
             return res.status(501).json({ error: error, msg: error.message })
