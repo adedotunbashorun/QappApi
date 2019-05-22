@@ -1,6 +1,8 @@
 const fs = require('fs');
 const readline = require('readline');
+var base64 = require('js-base64').Base64;
 const { google } = require('googleapis');
+var striptags = require('striptags');
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
@@ -102,41 +104,41 @@ displayInbox = function (gmail) {
         'labelIds': 'INBOX',
         'maxResults': 10
     },(err, response) =>{
-        // console.log(response.data.messages)
-            response.data.messages.forEach((message) => {
-                // console.log(message)
-            var messageRequest = gmail.users.messages.get({
+        response.data.messages.forEach((message) => {
+            gmail.users.messages.get({
                 'userId': 'me',
                 'id': message.id
+            },(err, res) =>{
+                // console.log(res.data)
+                appendMessageRow(res.data)
             });
 
-            this.appendMessageRow(messageRequest)
+            // this.appendMessageRow(messageRequest)
         });
     });
 }
 
 appendMessageRow= function (message) {
-    console.log(message)
-    // let from = getHeader(message.payload.headers, 'From')
-    // let subject = getHeader(message.payload.headers, 'Subject') 
-    // let date = this.getHeader(message.payload.headers, 'Date')
-    // let body = this.getBody(message.payload)
     
+    let from = getHeader(message.payload.headers, 'From')
+    let subject = getHeader(message.payload.headers, 'Subject') 
+    let date = this.getHeader(message.payload.headers, 'Date')
+    let body = this.getBody(message.payload)
+    console.log([from,subject,date,body])
 },
 
 getHeader= function (headers, index) {
-    var header = '';
-
-    $.each(headers, function () {
-        if (this.name === index) {
-            header = this.value;
+    let head = '';
+    headers.forEach((header,i) =>{
+        if (header.name === index) {
+            head = header.value;
         }
-    });
-    return header;
+    })
+    return head;
 }
 
 getBody= function (message) {
-    var encodedBody = '';
+    let encodedBody = '';
     if (typeof message.parts === 'undefined') {
         encodedBody = message.body.data;
     }
@@ -144,7 +146,8 @@ getBody= function (message) {
         encodedBody = this.getHTMLPart(message.parts);
     }
     encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
-    return decodeURIComponent(escape(window.atob(encodedBody)));
+    return striptags(base64.decode(encodedBody)).replace(/\n |\r/g, "").replace(/\n |\n/g, "")
+    // return decodeURIComponent(escape(atob(encodedBody)));
 }
 
 getHTMLPart = function(arr) {

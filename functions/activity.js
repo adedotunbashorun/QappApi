@@ -298,12 +298,24 @@ Activity.scheduleTime = () => {
                                                     schedule.question_id = result._id
                                                     schedule.scheduled_date = date
                                                     schedule.save()
+                                                    
                                                 } else {
                                                     throw "date exist"
                                                 }
 
                                             }).catch(err =>{
                                                 console.log(err.message)
+                                            })
+
+                                            Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((count) => {
+                                                if (count.length > 1) {
+                                                    Schedule.findOneAndDelete({ _id: count[0]._id }).then((del) => {
+                                                        console.log(del)
+                                                    }).catch(err => {
+                                                        console.log(err)
+                                                    })
+                                                }
+
                                             })
                                         }
                                     }).catch(err =>{

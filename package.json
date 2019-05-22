@@ -28,6 +28,7 @@
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "googleapis": "^39.2.0",
+    "js-base64": "^2.5.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.5.5",
     "mongoose-unique-validator": "^2.0.3",
@@ -39,7 +40,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "striptags": "^3.1.1"
   },
   "engines": {
     "node": ">= 8.11.3",
