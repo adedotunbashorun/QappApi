@@ -21,7 +21,7 @@ let redirect_uris = ["http://localhost:5000","https://qappdevtestapi.herokuapp.c
 fs.readFile('qapp.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Gmail API.
-    authorize(JSON.parse(content), listLabels);
+    authorize(displayInbox);
 });
 
 /**
@@ -30,8 +30,7 @@ fs.readFile('qapp.json', (err, content) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
-    // const { client_secret, client_id, redirect_uris } = credentials.installed;
+function authorize(callback) {
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[1]);
 
@@ -79,30 +78,31 @@ function getNewToken(oAuth2Client, callback) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listLabels(auth) {
-    const gmail = google.gmail({ version: 'v1', auth });
-    gmail.users.labels.list({
-        userId: 'me',
-    }, (err, res) => {
-        if (err) return console.log('The API returned an error: ' + err);
-        const labels = res.data.labels;
-        if (labels.length) {
-            console.log('Labels:');
-            labels.forEach((label) => {
-                console.log(`- ${label.name}`);
-            });
-            displayInbox(gmail)
-        } else {
-            console.log('No labels found.');
-        }
-    });
-}
+// function listLabels(auth) {
+//     const gmail = google.gmail({ version: 'v1', auth });
+//     gmail.users.labels.list({
+//         userId: 'me',
+//     }, (err, res) => {
+//         if (err) return console.log('The API returned an error: ' + err);
+//         const labels = res.data.labels;
+//         if (labels.length) {
+//             console.log('Labels:');
+//             labels.forEach((label) => {
+//                 console.log(`- ${label.name}`);
+//             });
+//             displayInbox(gmail)
+//         } else {
+//             console.log('No labels found.');
+//         }
+//     });
+// }
 
-displayInbox = function (gmail) {
+const displayInbox = function (auth) {
+    const gmail = google.gmail({ version: 'v1', auth });
     gmail.users.messages.list({
         'userId': 'me',
         'labelIds': 'INBOX',
-        'maxResults': 10
+        'maxResults': 2
     },(err, response) =>{
         response.data.messages.forEach((message) => {
             gmail.users.messages.get({
@@ -118,16 +118,16 @@ displayInbox = function (gmail) {
     });
 }
 
-appendMessageRow= function (message) {
+const appendMessageRow= function (message) {
     
     let from = getHeader(message.payload.headers, 'From')
     let subject = getHeader(message.payload.headers, 'Subject') 
-    let date = this.getHeader(message.payload.headers, 'Date')
-    let body = this.getBody(message.payload)
+    let date = getHeader(message.payload.headers, 'Date')
+    let body = getBody(message.payload)
     console.log([from,subject,date,body])
 },
 
-getHeader= function (headers, index) {
+const getHeader= function (headers, index) {
     let head = '';
     headers.forEach((header,i) =>{
         if (header.name === index) {
@@ -137,7 +137,7 @@ getHeader= function (headers, index) {
     return head;
 }
 
-getBody= function (message) {
+const getBody= function (message) {
     let encodedBody = '';
     if (typeof message.parts === 'undefined') {
         encodedBody = message.body.data;

@@ -7,13 +7,14 @@ const Activity = require('../../../functions/activity')
 const result = {}
 const Response = require('../Models/Response')
 const Schedule = require('../Models/Schedule')
+const ResponseService = require('../Service/ResponseService')
 
 class ExtraController {
 
-    static userResponse(req,res,next){
+    static userSmsResponse(req,res,next){
         let str = req.query.message
         let schedule = str.split(' ',1)
-        Schedule.findOne({ _id: schedule[0] }).then((resp) => {
+        Schedule.findOne({ _id: schedule[0], is_reply: false }).then((resp) => {
             let response = new Response()
             response.schedule_id = resp._id
             response.user_id = resp.user_id
@@ -28,6 +29,27 @@ class ExtraController {
             return res.status(401).json(err)
         })
         return res.status(201).json('successfully received')        
+    }
+
+    static userEmailResponse(req, res, next) {
+        let data = ResponseService.logic()
+        let str = data.subject
+        let schedule = str.split(' ')
+        Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2]}], is_reply: false}).then((resp) => {
+            let response = new Response()
+            response.schedule_id = resp._id
+            response.user_id = resp.user_id
+            response.question_id = resp.question_id
+            response.from = data.from
+            response.data = data.message
+            response.save()
+
+            resp.is_reply = true
+            resp.save()
+        }).catch(err => {
+            return res.status(401).json(err)
+        })
+        return res.status(201).json({ data: data })
     }
 
     static getResponse(req, res, next) {        

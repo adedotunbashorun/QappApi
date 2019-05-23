@@ -31,7 +31,11 @@ router.get('/activities', [Guard.isValidUser], (req, res, next) => {
 })
 
 router.get('/incomming/message',(req,res,next) =>{
-    ExtraController.userResponse(req,res,next)
+    ExtraController.userSmsResponse(req,res,next)
+})
+
+router.get('/all/gmail/message', (req, res, next) => {
+    ExtraController.userEmailResponse(req, res, next)
 })
 
 router.get('/responses', (req, res, next) => {
