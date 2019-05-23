@@ -203,13 +203,13 @@ Activity.sendScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms(user.phone, schedule._id+'\r\n'+question.subject + '\r\n' +question.description)
+                                Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+', ' +schedule._id+'\r\n'+question.subject + '\r\n' +question.description)
                                 Schedule.findOne({ _id: schedule._id }).then((sched) => {
                                     sched.status = true;
                                     sched.save()
                                 })
                             }else{
-                                Email(user, question.category_id.name+' '+schedule._id, html('Good morning'+ '\r\n '+question.subject+'\r\n'+question.description))
+                                Email(user, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
                                 Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
                                     sched.status = true;
                                     sched.save()
