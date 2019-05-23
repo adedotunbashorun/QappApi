@@ -35,6 +35,7 @@ class ExtraController {
         let data = ResponseService.logic()
         let str = data.subject
         let schedule = str.split(' ')
+        schedule[2] = (schedule[2]) ? schedule[2] : ''
         Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2]}], is_reply: false}).then((resp) => {
             let response = new Response()
             response.schedule_id = resp._id
