@@ -1,14 +1,14 @@
 const fs = require('fs');
 const readline = require('readline');
-var base64 = require('js-base64').Base64;
 const { google } = require('googleapis');
-var striptags = require('striptags');
+const Response = require('../Models/Response')
+const Schedule = require('../Models/Schedule')
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const TOKEN_PATH = '../../../token.json';
-const config = '../../../qapp.json';
+const Activity = require('../../../functions/activity')
+const TOKEN_PATH = './token.json';
 
 let client_id = '901575350388-bemr326mj23hbtbb9sg70l2p83i10vgu.apps.googleusercontent.com';
 let apiKey = 'AIzaSyCq2AW4pGDHRSzBouk_maitgu9SOq6n_A8';
@@ -22,11 +22,7 @@ class ResponseService {
     }
     // If modifying these scopes, delete token.json.
     static logic() {
-        fs.readFile(config, (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Gmail API.
-            authorize(this.displayInbox);
-        });
+        return this.authorize(this.displayInbox);
     }
 
     // Load client secrets from a local file.
@@ -38,14 +34,12 @@ class ResponseService {
      * @param {function} callback The callback to call with the authorized client.
      */
     static authorize (callback) {
-        const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[1]);
-
+        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[1]);
         // Check if we have previously stored a token.
         fs.readFile(TOKEN_PATH, (err, token) => {
             if (err) return this.getNewToken(oAuth2Client, callback);
             oAuth2Client.setCredentials(JSON.parse(token));
-            callback(oAuth2Client);
+            return callback(oAuth2Client);
         });
     }
 
@@ -75,78 +69,63 @@ class ResponseService {
                     if (err) return console.error(err);
                     console.log('Token stored to', TOKEN_PATH);
                 });
-                callback(oAuth2Client);
+                return callback(oAuth2Client);
             });
         });
     }
 
     static displayInbox (auth) {
         const gmail = google.gmail({ version: 'v1', auth });
-        let data = []
+        let result ={}
+        let datas = []
         gmail.users.messages.list({
             'userId': 'me',
             'labelIds': 'INBOX',
             'maxResults': 2
         }, (err, response) => {
-            response.data.messages.forEach((message) => {
+            if(err){
+                return err
+            }
+            response.data.messages.forEach((message,index) => {
                 gmail.users.messages.get({
                     'userId': 'me',
                     'id': message.id
-                }, (err, res) => {                    
-                    // console.log(res.data)
-                    data.push(this.appendMessageRow(res.data))
+                }, (err, res) => {  
+                    if(err){
+                        return err
+                    }
+                    result = Activity.appendMessageRow(res.data)
+                    datas.push(result)
+                    for( let i =0 ; i < datas.length; ++i){
+                        let data = datas[i]
+                        let str = data.subject
+                        let schedule = str.split(' ')
+                        schedule[2] = (schedule[2]) ? schedule[2] : ''
+                        Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2] }], is_reply: false }).then((resp) => {
+                            let response = new Response()
+                            response.schedule_id = resp._id
+                            response.user_id = resp.user_id
+                            response.question_id = resp.question_id
+                            response.from = data.from
+                            response.data = data.message
+                            response.save()
+
+                            resp.is_reply = true
+                            resp.save()
+                        }).catch(err => {
+                            console.log(err.message)
+                            return err
+                        })
+                    } 
+                    return datas                    
                 });
-
-                // this.appendMessageRow(messageRequest)
             });
+            
         });
-        return data;
+       
     }
 
-    static appendMessageRow  (message) {
-        let from = this.getHeader(message.payload.headers, 'From')
-        let subject = this.getHeader(message.payload.headers, 'Subject')
-        let date = this.getHeader(message.payload.headers, 'Date')
-        let body = this.getBody(message.payload)
-        return {from, subject, date, body}
-    }
-
-    static getHeader  (headers, index) {
-        let head = '';
-        headers.forEach((header, i) => {
-            if (header.name === index) {
-                head = header.value;
-            }
-        })
-        return head;
-    }
-
-    static getBody (message) {
-        let encodedBody = '';
-        if (typeof message.parts === 'undefined') {
-            encodedBody = message.body.data;
-        }
-        else {
-            encodedBody = this.getHTMLPart(message.parts);
-        }
-        encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
-        return striptags(base64.decode(encodedBody)).replace(/\n |\r/g, "").replace(/\n |\n/g, "")
-        // return decodeURIComponent(escape(atob(encodedBody)));
-    }
-
-    static getHTMLPart  (arr) {
-        for (var x = 0; x <= arr.length; x++) {
-            if (typeof arr[x].parts === 'undefined') {
-                if (arr[x].mimeType === 'text/html') {
-                    return arr[x].body.data;
-                }
-            }
-            else {
-                return this.getHTMLPart(arr[x].parts);
-            }
-        }
-        return '';
-    }
+    
 
 }
 

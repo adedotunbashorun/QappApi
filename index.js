@@ -124,6 +124,7 @@ const appendMessageRow= function (message) {
     let subject = getHeader(message.payload.headers, 'Subject') 
     let date = getHeader(message.payload.headers, 'Date')
     let body = getBody(message.payload)
+    return [from,subject,date,body]
     console.log([from,subject,date,body])
 },
 

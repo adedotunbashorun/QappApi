@@ -6,6 +6,8 @@ const Question = require('../Modules/Question/Models/Question')
 const User = require('../Modules/User/Models/User')
 const request = require('request')
 var nodemailer = require("nodemailer")
+var base64 = require('js-base64').Base64;
+var striptags = require('striptags');
 var sgTransport = require("nodemailer-sendgrid-transport")
 const config = require('../qapp.json')
 
@@ -22,6 +24,51 @@ var fs = require('fs')
 const Activity = {}
 
 
+Activity.appendMessageRow = (message) => {
+    let data = { from: '', subject: '', date: '', body: '' }
+    data.from = getHeader(message.payload.headers, 'From')
+    data.subject = getHeader(message.payload.headers, 'Subject')
+    data.date = getHeader(message.payload.headers, 'Date')
+    data.body = getBody(message.payload)
+    return data
+}
+
+const getHeader = (headers, index) => {
+    let head = '';
+    headers.forEach((header, i) => {
+        if (header.name === index) {
+            head = header.value;
+        }
+    })
+    return head;
+}
+
+const getBody = (message) => {
+    let encodedBody = '';
+    if (typeof message.parts === 'undefined') {
+        encodedBody = message.body.data;
+    }
+    else {
+        encodedBody = getHTMLPart(message.parts);
+    }
+    encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+    return striptags(base64.decode(encodedBody)).replace(/\n |\r/g, "").replace(/\n |\n/g, "")
+    // return decodeURIComponent(escape(atob(encodedBody)));
+}
+
+const getHTMLPart = (arr) => {
+    for (var x = 0; x <= arr.length; x++) {
+        if (typeof arr[x].parts === 'undefined') {
+            if (arr[x].mimeType === 'text/html') {
+                return arr[x].body.data;
+            }
+        }
+        else {
+            return getHTMLPart(arr[x].parts);
+        }
+    }
+    return '';
+}
 
 Activity.Base64_encode = function(file) {
     // read binary data
