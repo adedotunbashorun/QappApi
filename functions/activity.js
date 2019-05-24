@@ -84,7 +84,7 @@ Activity.Email = function(data, subject, message) {
 const Email = function (data, subject, message) {
     try {
         var email = {
-            from: config.app_name,
+            from: config.email+' '+config.app_name,
             to: (data.email) ? data.email : config.email,
             subject: subject,
             html: message
@@ -291,11 +291,10 @@ Activity.unrepliedScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms(user.phone, "Good Evening " + user.title + ' ' + user.last_name + '\r\n We are yet to recieve a response from you regarding the task assign to you, please any issues.\r\n Thank you.')
+                                Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + "\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley.")
                                 
                             }else{
-                                Email(user, question.category_id.name, html("Good Evening "+ user.title + ' '+ user.last_name+'\r\n We are yet to recieve a response from you regarding the task assign to you, please any issues.\r\n Thank you.'))
-                                
+                                Email(user, question.category_id.name, html("Hi " + user.title + ' ' + user.last_name + "\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley."))                                
                             }
                         }).catch(err =>{
                             throw new Error(err)
