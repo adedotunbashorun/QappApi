@@ -332,50 +332,54 @@ Activity.scheduleTime = () => {
                             let result = random_item(questions)
                             let cat = categories[i]
                             // console.log(result)
-                            Schedule.find({ user_id: user._id, category_id: cat._id }).then((schedules) => {
-                                console.log(schedules.length)
-                                if (schedules.length < 4) {
-                                    Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
-                                        if (schedule == null) {
-                                            Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
-                                                if (dates.length == 0) {
-                                                    let schedule = new Schedule()
-                                                    schedule.user_id = user._id
-                                                    schedule.category_id = result.category_id
-                                                    schedule.question_id = result._id
-                                                    schedule.scheduled_date = date
-                                                    schedule.save()
-                                                    
-                                                } else {
-                                                    throw "date exist"
-                                                }
+                            if(result){
+                                Schedule.find({ user_id: user._id, category_id: cat._id }).then((schedules) => {
+                                    console.log(schedules.length)
+                                    if (schedules.length < 4) {
+                                        Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
+                                            if (schedule == null) {
+                                                Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
+                                                    if (dates.length == 0) {
+                                                        let schedule = new Schedule()
+                                                        schedule.user_id = user._id
+                                                        schedule.category_id = result.category_id
+                                                        schedule.question_id = result._id
+                                                        schedule.scheduled_date = date
+                                                        schedule.save()
 
-                                            }).catch(err =>{
-                                                console.log(err.message)
-                                            })
+                                                    } else {
+                                                        throw "date exist"
+                                                    }
 
-                                            Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((count) => {
-                                                if (count.length > 1) {
-                                                    Schedule.findOneAndDelete({ _id: count[0]._id }).then((del) => {
-                                                        console.log(del,'1')
-                                                    }).catch(err => {
-                                                        console.log(err)
-                                                    })
-                                                }
+                                                }).catch(err => {
+                                                    console.log(err.message)
+                                                })
 
-                                            }).catch(err =>{
-                                                
-                                            })
-                                        }
-                                    }).catch(err =>{
-                                        console.log(err)
-                                    })
-                                } else {
-                                    console.log('completed')
-                                }
-                            }).catch(err =>{
-                                console.log(err)
-                            })
+                                                Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((count) => {
+                                                    if (count.length > 1) {
+                                                        Schedule.findOneAndDelete({ _id: count[0]._id }).then((del) => {
+                                                            console.log(del, '1')
+                                                        }).catch(err => {
+                                                            console.log(err)
+                                                        })
+                                                    }
+
+                                                }).catch(err => {
+
+                                                })
+                                            }
+                                        }).catch(err => {
+                                            console.log(err)
+                                        })
+                                    } else {
+                                        console.log('completed')
+                                    }
+                                }).catch(err => {
+                                    console.log(err)
+                                })
+                            }                            
+                        }).catch(err =>{
+                            console.log(err.message)
                         })
                     }
                 })
