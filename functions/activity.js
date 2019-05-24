@@ -363,6 +363,8 @@ Activity.scheduleTime = () => {
                                                     })
                                                 }
 
+                                            }).catch(err =>{
+                                                
                                             })
                                         }
                                     }).catch(err =>{
@@ -371,6 +373,8 @@ Activity.scheduleTime = () => {
                                 } else {
                                     console.log('completed')
                                 }
+                            }).catch(err =>{
+                                console.log(err)
                             })
                         })
                     }
