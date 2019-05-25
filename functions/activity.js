@@ -11,14 +11,17 @@ var striptags = require('striptags');
 var sgTransport = require("nodemailer-sendgrid-transport")
 const config = require('../qapp.json')
 
-var options = {
+let options2 = {
+    host: 'smtp.googlemail.com', // Gmail Host
+    port: 465, // Port
+    secure: true, // this is true as port is 465
     auth: {
-        api_user: config.sendgrid_user_name,
-        api_key: config.sendgrid_password
+        user: config.GMAIL_USERNAME, //Gmail username
+        pass: config.GMAIL_PASSWORD // Gmail password
     }
 }
 
-var client = nodemailer.createTransport(sgTransport(options))
+var client = nodemailer.createTransport(options2)
 
 var fs = require('fs')
 const Activity = {}
@@ -81,10 +84,10 @@ Activity.Email = function(data, subject, message) {
     Email(data, subject, message)
 }
 
-const Email = function (data, subject, message) {
+const Email = function(data, subject, message){
     try {
         var email = {
-            from: config.email+' '+config.app_name,
+            from: config.email + ' ' + config.app_name,
             to: (data.email) ? data.email : config.email,
             subject: subject,
             html: message
@@ -94,14 +97,13 @@ const Email = function (data, subject, message) {
             if (err) {
                 console.log(err)
             } else {
-                console.log("Message sent: " + info.response)
+                console.log("Message sent: " + info.messageId)
             }
         })
     } catch (error) {
         return res.status(401).json({ "success": false, "message": error })
     }
 }
-
 
 
 Activity.html = (data) => {
@@ -170,20 +172,6 @@ const random_item = (items) =>{
     return items[Math.floor(Math.random()*items.length)];     
 }
 
-function getUnique(arr, comp) {
-
-  const unique = arr
-       .map(e => e[comp])
-
-     // store the keys of the unique objects
-    .map((e, i, final) => final.indexOf(e) === i && i)
-
-    // eliminate the dead keys & store unique objects
-    .filter(e => arr[e]).map(e => arr[e]);
-
-   return unique;
-}
-
 function getRandom(arr, n) {
     var result = new Array(n),
         len = arr.length,
@@ -239,8 +227,7 @@ const Sms = (number, message) => {
 
 Activity.sendScheduleMessage = async () =>{
     try {
-        // Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning wale'))
-        // Email(data = { email: ' aadum@coronams.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
+        
         Schedule.find({ status: { $ne: true}}).then((schedules) =>{
             for(let i = 0; i < schedules.length; ++i ){
                 let schedule = schedules[i]
@@ -280,8 +267,7 @@ Activity.sendScheduleMessage = async () =>{
 
 Activity.unrepliedScheduleMessage = async () =>{
     try {
-        // Email(data = { email: 'adedotunolawale@gmail.com' }, 'subject', html('good morning wale'))
-        // Email(data = { email: ' aadum@coronams.com' }, 'subject', html("good morning koko, this is a cron job that runs every 8'O clock in the morning. "))
+
         Schedule.find({ is_reply: { $ne: true}}).then((schedules) =>{
             for(let i = 0; i < schedules.length; ++i ){
                 let schedule = schedules[i]
@@ -291,10 +277,10 @@ Activity.unrepliedScheduleMessage = async () =>{
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
-                                Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + "\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley.")
+                                Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley.")
                                 
                             }else{
-                                Email(user, question.category_id.name, html("Hi " + user.title + ' ' + user.last_name + "\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley."))                                
+                                Email(user, question.category_id.name, html("Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley."))                                
                             }
                         }).catch(err =>{
                             throw new Error(err)

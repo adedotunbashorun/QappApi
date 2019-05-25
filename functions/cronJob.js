@@ -1,5 +1,6 @@
 const cron = require("node-cron")
 const Activity = require('./activity')
+const ResponseService = require('../Modules/Site/Service/ResponseService')
 
 
 
@@ -11,7 +12,7 @@ const Activity = require('./activity')
 cron.schedule("*/01 * * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 2")
-    try {
+    try {        
         Activity.scheduleTime()  
     } catch (err) {
         console.log(err)
@@ -32,6 +33,7 @@ cron.schedule("55 20 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 4")
     try {
+        ResponseService.logic()
         Activity.unrepliedScheduleMessage()
     } catch (err) {
         console.log(err)

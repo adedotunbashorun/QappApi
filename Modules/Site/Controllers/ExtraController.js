@@ -4,8 +4,8 @@
 const EmailAlert = require('../Models/Email')
 const User = require('../../User/Models/User')
 const Activity = require('../../../functions/activity')
-const result = {}
 const Response = require('../Models/Response')
+const Archieve = require('../Models/Archieve')
 const Schedule = require('../Models/Schedule')
 const ResponseService = require('../Service/ResponseService')
 
@@ -14,21 +14,37 @@ class ExtraController {
     static userSmsResponse(req,res,next){
         let str = req.query.message
         let schedule = str.split(' ',1)
-        Schedule.findOne({ _id: schedule[0], is_reply: false }).then((resp) => {
-            let response = new Response()
-            response.schedule_id = resp._id
-            response.user_id = resp.user_id
-            response.question_id = resp.question_id
-            response.from = req.query.from
-            response.data = req.query.message
-            response.save()
-        
-            resp.is_reply = true
-            resp.save()
-        }).catch(err =>{
-            return res.status(401).json(err)
-        })
-        return res.status(201).json('successfully received')        
+        let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+        User.findOne({ phone: req.query.from }).then((user)=>{
+            Schedule.findOne({ user_id: user._id , scheduled_date: new Date(current_date), is_reply: false }).then((resp) => {
+
+                let response = new Response()
+                response.schedule_id = resp._id
+                response.user_id = resp.user_id
+                response.question_id = resp.question_id
+                response.from = req.query.from
+                response.data = req.query.message
+                response.save()
+
+                resp.is_reply = true
+                resp.save()
+
+                return res.status(201).json('successfully received') 
+
+            }).catch(err => {
+                let arc = new Archieve()
+                arc.from = req.query.from
+                arc.data = req.query.message
+                arc.save()
+                return res.status(401).json(err.message)
+            }) 
+        }).catch((err) =>{
+            let arc = new Archieve()
+            arc.from = req.query.from
+            arc.data = req.query.message
+            arc.save()
+            return res.status(401).json(err.message) 
+        })   
     }
 
     static userEmailResponse(req, res, next) {
@@ -39,6 +55,14 @@ class ExtraController {
     static getResponse(req, res, next) {        
         Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').then((responses) => {
             return res.status(201).json({ responses: responses})
+        }).catch(err => {
+            return res.status(401).json(err)
+        })
+    }
+
+    static getArchieve(req, res, next) {
+        Archieve.find({}).then((responses) => {
+            return res.status(201).json({ archieves: archieves })
         }).catch(err => {
             return res.status(401).json(err)
         })

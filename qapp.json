@@ -7,5 +7,7 @@
     "client_id": "901575350388-bemr326mj23hbtbb9sg70l2p83i10vgu.apps.googleusercontent.com",
     "client_secret": "sbzqVCE_E55fuUayWDBvXlp5",
     "apiKey": "AIzaSyCq2AW4pGDHRSzBouk_maitgu9SOq6n_A8",
-    "scopes": "https: //www.googleapis.com/auth/gmail.readonly"
+    "scopes": "https: //www.googleapis.com/auth/gmail.readonly",
+    "GMAIL_USERNAME": "adedotunolawale@gmail.com",
+    "GMAIL_PASSWORD": "professionals@2014"
 }

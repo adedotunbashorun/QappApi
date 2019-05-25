@@ -2,6 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const Response = require('../Models/Response')
+const Archieve = require('../Models/Archieve')
 const Schedule = require('../Models/Schedule')
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -81,7 +82,7 @@ class ResponseService {
         gmail.users.messages.list({
             'userId': 'me',
             'labelIds': 'INBOX',
-            'maxResults': 2
+            'maxResults': 100
         }, (err, response) => {
             if(err){
                 return err
@@ -96,27 +97,30 @@ class ResponseService {
                     }
                     result = Activity.appendMessageRow(res.data)
                     datas.push(result)
-                    for( let i =0 ; i < datas.length; ++i){
-                        let data = datas[i]
-                        let str = data.subject
-                        let schedule = str.split(' ')
-                        schedule[2] = (schedule[2]) ? schedule[2] : ''
-                        Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2] }], is_reply: false }).then((resp) => {
-                            let response = new Response()
-                            response.schedule_id = resp._id
-                            response.user_id = resp.user_id
-                            response.question_id = resp.question_id
-                            response.from = data.from
-                            response.data = data.message
-                            response.save()
+                    let data = result
+                    let str = data.subject
+                    let schedule = str.split(' ')
+                    schedule[2] = (schedule[2]) ? schedule[2] : ''                        
+                    Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2] }], is_reply: false }).then((resp) => {
+                        let response = new Response()
+                        response.schedule_id = resp._id
+                        response.user_id = resp.user_id
+                        response.question_id = resp.question_id
+                        response.from = data.from
+                        response.data = data.message
+                        response.save()
 
-                            resp.is_reply = true
-                            resp.save()
-                        }).catch(err => {
-                            console.log(err.message)
-                            return err
-                        })
-                    } 
+                        resp.is_reply = true
+                        resp.save()
+
+                    }).catch(err => {
+                        let arc = new Archieve()
+                        arc.from = data.from
+                        arc.data = data.message
+                        arc.save()
+                        // console.log(err.message)
+                        return err.message
+                    })
                     return datas                    
                 });
             });
