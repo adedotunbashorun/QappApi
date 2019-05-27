@@ -82,7 +82,7 @@ class ResponseService {
         gmail.users.messages.list({
             'userId': 'me',
             'labelIds': 'INBOX',
-            'maxResults': 100
+            'maxResults': 2
         }, (err, response) => {
             if(err){
                 return err
