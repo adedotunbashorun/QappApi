@@ -8,7 +8,6 @@ const request = require('request')
 var nodemailer = require("nodemailer")
 var base64 = require('js-base64').Base64;
 var striptags = require('striptags');
-var sgTransport = require("nodemailer-sendgrid-transport")
 const config = require('../qapp.json')
 
 let options2 = {

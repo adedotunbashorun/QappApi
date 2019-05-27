@@ -107,7 +107,7 @@ class ResponseService {
                         response.user_id = resp.user_id
                         response.question_id = resp.question_id
                         response.from = data.from
-                        response.data = data.message
+                        response.data = data.body
                         response.save()
 
                         resp.is_reply = true
@@ -116,7 +116,7 @@ class ResponseService {
                     }).catch(err => {
                         let arc = new Archieve()
                         arc.from = data.from
-                        arc.data = data.message
+                        arc.data = data.body
                         arc.save()
                         // console.log(err.message)
                         return err.message
