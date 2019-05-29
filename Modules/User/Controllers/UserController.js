@@ -29,7 +29,7 @@ class UserController {
                         if (error) {
                             Activity.activity_log(req, user._id, 'Error Updating Profile!')
                             (req.user) ? Activity.activity_log(req, req.user._id, 'Error Updating User') : ''
-                            return res.status(501).json({ error: error, msg: error.message })
+                            return res.json({ error: error, msg: error.message })
                         } else {
                             Activity.Email(user, 'Profile Update', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ', Your profile has been updated succesfully.</p>'))
                             Activity.activity_log(req, user._id, 'Profile Updated Successfully')

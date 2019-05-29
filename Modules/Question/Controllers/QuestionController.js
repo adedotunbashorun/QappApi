@@ -18,7 +18,7 @@ class QuestionController {
             const question = new Question(req.body)
             question.save(function (error) {
                 if (error) {
-                    return res.status(401).json({ error: error, msg: error.message })
+                    return res.json({ error: error, msg: error.message })
                 } else {
                     // Activity.activity_log(req, req.body, 'Created Question')
                     return res.status(201).json({ msg: 'question message Successfully received.' })
@@ -70,7 +70,7 @@ class QuestionController {
     static update(req, res, next) {
         Question.findById(req.params.id, function (error, question){
             if (error) {
-                return res.status(401).json({ error: error, msg: error.message })
+                return res.json({ error: error, msg: error.message })
             } else {
                 question.category_id = req.body.category_id
                 question.subject = req.body.subject

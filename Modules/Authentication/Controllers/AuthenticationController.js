@@ -25,12 +25,12 @@ class AuthenticationController{
             user.temporarytoken = crypto.randomBytes(20).toString('hex')
              user.save(function (error) {
                 if (error) {
-                    return res.status(501).json({ error: error, msg: error.message })
+                    return res.json({ error: error, msg: error.message })
                 } else {
-                    Activity.Email(user, 'New Registration', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ', Thank you for registering at Brax Map.<br> Please click the link below to complete registration https://qapp.herokuapp.com/#/activate/' + user.temporarytoken + '</p>'))
+                    Activity.Email(user, 'New Registration', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ', Thank you for registering at Qapp Map.<br> Please click the link below to complete registration https://qapp.herokuapp.com/#/activate/' + user.temporarytoken + '</p>'))
                     Activity.activity_log(req, user._id, 'Registered')
                     // (req.user) ? Activity.activity_log(req, req.user._id, 'Register a user') : ''
-                    return res.status(201).json({ user: user, msg: 'Registration Successful, Please activate your account by visiting your mail.' })
+                    return res.status(201).json({ user: user, msg: 'Registration Successful.' })
                 }
             })
         } catch (error) {

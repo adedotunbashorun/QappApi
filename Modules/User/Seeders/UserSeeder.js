@@ -8,18 +8,18 @@ const Activity = require('../../../functions/activity')
 UserSeeder.seedUser = (req, res) => {
     try {
         // use the User model to insert/save
-        // var user = new User()
-        // user.title = "Mr"
-        // user.user_type = 'admin'
-        // user.first_name = 'Dev'
-        // user.last_name = 'Admin'
-        // user.email = 'aadumkoko@gmail.com'
-        // user.temporarytoken = null
-        // user.password = User.hashPassword('123456')
-        // user.is_active = true
-        // user.save()
+        var user = new User()
+        user.title = "Mr"
+        user.user_type = 'admin'
+        user.first_name = 'Dev'
+        user.last_name = 'Admin'
+        user.email = 'adedotunolawale@gmail.com'
+        user.temporarytoken = null
+        user.password = User.hashPassword('123456')
+        user.is_active = true
+        user.save()
 
-        User.findOne({ email: 'aadumkoko@gmail.com'}).then((user)  =>{
+        User.findOne({ email: 'adedotunolawale@gmail.com'}).then((user)  =>{
             user.user_type = 'admin'
             user.is_active = true
             user.save()

@@ -272,7 +272,7 @@ Activity.unrepliedScheduleMessage = async () =>{
                 let schedule = schedules[i]
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
                 let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                if (schedule && schedule_date == current_date ){
+                if (schedule && schedule_date === current_date ){
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
@@ -304,73 +304,87 @@ Activity.unrepliedScheduleMessage = async () =>{
 Activity.scheduleTime = () => {
     User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
         if (user) {
-            Schedule.find({ user_id: user._id }).countDocuments().then(count => {
-                if (count == 8) {
-                    user.is_scheduled = true
-                    user.save()
-                }
-            })
 
             try {
+                
+                Schedule.find({ user_id: user._id }).countDocuments().then(count => {
+                    if (count == 8) {
+                        user.is_scheduled = true
+                        user.save()                        
+                        return false
+                    } 
+                })                
+                
                 Category.find({}).sort('createdAt').limit(2).then((categories) => {
-                    for (let i = 0; i < categories.length; ++i) {
+                    for (let i = 0; i < categories.length; ++i) {                        
                         let schedule_date = randomDate(new Date(), new Date(Date.now() + 12096e5), 9, 10)
                         let date = schedule_date.getFullYear() + '-' + (schedule_date.getMonth() + 1) + '-' + schedule_date.getDate()
-                        Question.find({ category_id: categories[i]._id }).then((questions) => {
-                            let result = random_item(questions)
-                            let cat = categories[i]
-                            // console.log(result)
-                            if(result){
-                                Schedule.find({ user_id: user._id, category_id: cat._id }).then((schedules) => {
-                                    console.log(schedules.length)
-                                    if (schedules.length < 4) {
-                                        Schedule.findOne({ user_id: user._id, question_id: result._id }).then((schedule) => {
-                                            if (schedule == null) {
-                                                Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((dates) => {
-                                                    if (dates.length == 0) {
-                                                        let schedule = new Schedule()
-                                                        schedule.user_id = user._id
-                                                        schedule.category_id = result.category_id
-                                                        schedule.question_id = result._id
-                                                        schedule.scheduled_date = date
-                                                        schedule.save()
-
-                                                    } else {
-                                                        throw "date exist"
-                                                    }
-
-                                                }).catch(err => {
-                                                    console.log(err.message)
-                                                })
-
-                                                Schedule.find({ user_id: user._id, scheduled_date: new Date(date) }).then((count) => {
-                                                    if (count.length > 1) {
-                                                        Schedule.findOneAndDelete({ _id: count[0]._id }).then((del) => {
-                                                            console.log(del, '1')
+                        Schedule.find({ user_id: user._id,scheduled_date: date }).countDocuments().then(count => {
+                            if (count === 1) {     
+                                console.log('exists')              
+                                return false
+                            }else{
+                                Question.find({ category_id: categories[i]._id }).then((questions) => {
+                                    let result = random_item(questions)
+                                    let cat = categories[i]
+                                    // console.log(result)
+                                    if(result){
+                                        Schedule.find({ user_id: user._id, category_id: cat._id }).countDocuments().then((schedules) => {
+                                            console.log(schedules)
+                                            if (schedules < 4) {
+                                                Schedule.findOne({ user_id: user._id, question_id: result._id  }).countDocuments().then((schedule) => {
+                                                    if (schedule === 0) {
+                                                        Schedule.find({ user_id: user._id, scheduled_date: date  }).countDocuments().then((dates) => {
+                                                            if (dates === 0) {
+                                                                let schedule = new Schedule()
+                                                                schedule.user_id = user._id
+                                                                schedule.category_id = result.category_id
+                                                                schedule.question_id = result._id
+                                                                schedule.scheduled_date = date
+                                                                schedule.save()
+                                                                Schedule.find({ user_id: user._id,scheduled_date: date }).then(schedules => {
+                                                                    if (schedules.length > 1) {     
+                                                                        schedules.forEach(schedule =>{
+                                                                            Schedule.findByIdAndRemove(schedule._id).then(res =>{
+                                                                                if(res)
+                                                                                    console.log('deleted')
+                                                                            }).catch(err =>{
+                                                                                return false
+                                                                            }) 
+                                                                        })
+                                                                    }
+                                                                })
+                                                            } else {
+                                                                return false
+                                                            }
+        
                                                         }).catch(err => {
-                                                            console.log(err)
+                                                            console.log(err.message)
                                                         })
+                                                        
+                                                    }else{
+                                                        return false
                                                     }
-
                                                 }).catch(err => {
-
+                                                    console.log(err)
                                                 })
+                                            } else {
+                                                console.log('completed')
                                             }
                                         }).catch(err => {
                                             console.log(err)
                                         })
-                                    } else {
-                                        console.log('completed')
-                                    }
-                                }).catch(err => {
-                                    console.log(err)
+                                    }                            
+                                }).catch(err =>{
+                                    console.log(err.message)
                                 })
-                            }                            
+                            }
                         }).catch(err =>{
-                            console.log(err.message)
-                        })
+                            return false
+                        })                         
                     }
-                })
+                })              
+                
             } catch (error) {
                 console.log(error)
             }

@@ -17,7 +17,7 @@ class CategoryController {
             const category = new Category(req.body)
             category.save(function (error) {
                 if (error) {
-                    return res.status(401).json({ error: error, msg: error.message })
+                    return res.json({ error: error, msg: error.message })
                 } else {
                     Activity.activity_log(req, req.user, 'Created Category')
                     return res.status(201).json({ msg: 'Category message Successfully received.' })
@@ -58,7 +58,7 @@ class CategoryController {
     static update(req, res, next) {
         Category.findById(req.params.id, function (error, category) {
             if (error) {
-                return res.status(401).json({ error: error, msg: error.message })
+                return res.json({ error: error, msg: error.message })
             } else {
                 category.name = req.body.name
                 category.description = req.body.description
