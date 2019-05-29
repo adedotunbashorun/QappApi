@@ -316,6 +316,7 @@ Activity.scheduleTime = () => {
                 })                
                 
                 Category.find({}).sort('createdAt').limit(2).then((categories) => {
+
                     for (let i = 0; i < categories.length; ++i) {                        
                         let schedule_date = randomDate(new Date(), new Date(Date.now() + 12096e5), 9, 10)
                         let date = schedule_date.getFullYear() + '-' + (schedule_date.getMonth() + 1) + '-' + schedule_date.getDate()
@@ -341,19 +342,7 @@ Activity.scheduleTime = () => {
                                                                 schedule.category_id = result.category_id
                                                                 schedule.question_id = result._id
                                                                 schedule.scheduled_date = date
-                                                                schedule.save()
-                                                                Schedule.find({ user_id: user._id,scheduled_date: date }).then(schedules => {
-                                                                    if (schedules.length > 1) {     
-                                                                        schedules.forEach(schedule =>{
-                                                                            Schedule.findByIdAndRemove(schedule._id).then(res =>{
-                                                                                if(res)
-                                                                                    console.log('deleted')
-                                                                            }).catch(err =>{
-                                                                                return false
-                                                                            }) 
-                                                                        })
-                                                                    }
-                                                                })
+                                                                schedule.save()                                                                
                                                             } else {
                                                                 return false
                                                             }
@@ -381,8 +370,26 @@ Activity.scheduleTime = () => {
                             }
                         }).catch(err =>{
                             return false
-                        })                         
+                        })
+                        setTimeout(() => {
+                            Schedule.find({ user_id: user._id,scheduled_date: date }).then(schedules => {                            
+                                if (schedules.length > 1) {
+                                    console.log(schedules)
+                                    schedules.forEach(schedule =>{
+                                        Schedule.findByIdAndDelete(schedule._id).then(res =>{
+                                            if(res)
+                                                console.log('deleted')
+                                        }).catch(err =>{
+                                            return false
+                                        }) 
+                                    })
+                                }
+                            }).catch(err =>{
+                                return false
+                            })                            
+                        }, 5000);                         
                     }
+                    
                 })              
                 
             } catch (error) {

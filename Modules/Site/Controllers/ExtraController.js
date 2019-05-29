@@ -3,12 +3,13 @@
 // const Support = require('../../Support/Models/Support')
 const EmailAlert = require('../Models/Email')
 const User = require('../../User/Models/User')
+const Question = require('../../Question/Models/Question')
 const Activity = require('../../../functions/activity')
 const Response = require('../Models/Response')
 const Archieve = require('../Models/Archieve')
 const Schedule = require('../Models/Schedule')
 const ResponseService = require('../Service/ResponseService')
-
+const result = {}
 class ExtraController {
 
     static userSmsResponse(req,res,next){
@@ -16,7 +17,7 @@ class ExtraController {
         let schedule = str.split(' ',1)
         let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
         User.findOne({ phone: req.query.from }).then((user)=>{
-            Schedule.findOne({ user_id: user._id , scheduled_date: new Date(current_date), is_reply: false }).then((resp) => {
+            Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
 
                 let response = new Response()
                 response.schedule_id = resp._id
@@ -61,29 +62,41 @@ class ExtraController {
     }
 
     static getArchieve(req, res, next) {
-        Archieve.find({}).then((responses) => {
+        Archieve.find({}).then((archieves) => {
             return res.status(201).json({ archieves: archieves })
         }).catch(err => {
             return res.status(401).json(err)
         })
     }
+    
 
-    // static countUserDoc(req, res, next) {
-    //     Support.find({ user_id: req.params.user_id }).countDocuments().then(count => {
-    //         result.support_count = count
-    //     }).catch(error => {
-    //         return res.status(422).json(error)
-    //     })
-    // }
+    static countAllDoc(req, res, next) {
 
-    // static countAllDoc(req, res, next) {
-    //     Support.find({}).countDocuments().then(count => {
-    //         result.support_count = count
-    //     }).catch(error => {
-    //         return res.status(422).json(error)
-
-    //     })
-    // }
+        User.countDocuments({}).exec((err ,count) =>{            
+            result.users_count = count
+            Question.countDocuments({}).exec((err ,count) =>{
+                result.questions_count = count
+                Schedule.countDocuments({}).exec((err ,count) =>{
+                    result.schedules_count = count
+                    Response.countDocuments({}).exec((err ,count) =>{
+                        result.responses_count = count
+                        Schedule.countDocuments({ status: true}).exec((err ,count) =>{
+                            result.schedules_sent = count
+                            Schedule.countDocuments({ status: true,is_reply: { $ne: true}}).exec((err ,count) =>{
+                                result.schedules_failed = count
+                                Archieve.countDocuments({}).exec((err ,count) =>{
+                                    result.archieves_count = count
+                                    return res.status(201).json({result})
+                                })
+                            })
+                        })
+                    })
+            
+                    
+                })
+            })
+        })
+    }
 
     static deactivateAlertEmail(req, res, next) {
         EmailAlert.findOne({ email: req.params.email }).then(function (email) {
