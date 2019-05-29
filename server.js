@@ -9,6 +9,11 @@ const config = require('./config')
 app = express()
 require('./functions/cronJob')
 
+let http = require("http")
+setInterval(function() {
+    http.get("http://qappdevtestapi.herokuapp.com")
+}, 300000); 
+
 var passport = require('passport')
 
 const port = config.app.port
