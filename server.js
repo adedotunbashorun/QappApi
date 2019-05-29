@@ -9,6 +9,7 @@ const config = require('./config')
 app = express()
 require('./functions/cronJob')
 
+//becos of heroku || pm2 is advised for other hosting
 let http = require("http")
 setInterval(function() {
     http.get("http://qappdevtestapi.herokuapp.com")

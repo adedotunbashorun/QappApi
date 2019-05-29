@@ -82,7 +82,7 @@ class ResponseService {
         gmail.users.messages.list({
             'userId': 'me',
             'labelIds': 'INBOX',
-            'maxResults': 2
+            'maxResults': 100
         }, (err, response) => {
             if(err){
                 return err
@@ -99,8 +99,7 @@ class ResponseService {
                     datas.push(result)
                     let data = result
                     let str = data.subject
-                    let schedule = str.split(' ')
-                    schedule[2] = (schedule[2]) ? schedule[2] : ''                        
+                    let schedule = str.split(' ')                        
                     Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2] }], is_reply: false }).then((resp) => {
                         let response = new Response()
                         response.schedule_id = resp._id
