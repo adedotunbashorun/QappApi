@@ -374,7 +374,6 @@ Activity.scheduleTime = () => {
                         setTimeout(() => {
                             Schedule.find({ user_id: user._id,scheduled_date: date }).then(schedules => {                            
                                 if (schedules.length > 1) {
-                                    console.log(schedules)
                                     schedules.forEach(schedule =>{
                                         Schedule.findByIdAndDelete(schedule._id).then(res =>{
                                             if(res)
