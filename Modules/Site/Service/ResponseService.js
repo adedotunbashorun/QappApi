@@ -99,10 +99,10 @@ class ResponseService {
                     result = Activity.appendMessageRow(res.data)
                     datas.push(result)
                     let data = result
-                    let str = data.subject
+                    let str = data.from
                     let rs =str.replace(/</g, '').replace(/>/g,'')
                     let schedule = rs.split(' ')
-                    
+
                     console.log(schedule[1])                 
                     let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
                     User.findOne({ email: schedule[1] }).then((user)=>{
