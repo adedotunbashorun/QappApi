@@ -105,9 +105,9 @@ class ResponseService {
 
                     console.log(schedule[1])                 
                     let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                    User.findOne({ email: schedule[1] }).then((user)=>{
+                    User.findOne({ $or: [{ _id: schedule[1], _id: schedule[2], _id: schedule[3] }] }).then((user)=>{
                         Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
-                            Response.find({data: data.body}).then( res =>{
+                            Response.find({_id: resp._id}).then( res =>{
                                 if(res.length === 0){
                                     let response = new Response()
                                     response.schedule_id = resp._id
