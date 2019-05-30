@@ -103,11 +103,8 @@ class ResponseService {
                     let rs =str.replace(/</g, '').replace(/>/g,'')
                     let schedule = rs.split(' ')
 
-                    console.log(schedule[1],schedule[2]+'  '+ schedule[3])                 
-                    let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                    
-                    User.findOne({ $or: [{ email: schedule[1] },{ email: schedule[2] },{ email: schedule[3] }] }).then((user)=>{
-                        console.log(user,1)
+                    let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()                    
+                    User.findOne({ $or: [{ email: schedule[0] }, { email: schedule[1] },{ email: schedule[2] },{ email: schedule[3] }] }).then((user)=>{
                         Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
                             Response.find({_id: resp._id}).then( res =>{
                                 if(res.length === 0){
