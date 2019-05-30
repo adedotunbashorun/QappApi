@@ -115,11 +115,11 @@ class ResponseService {
                                     response.from = data.from
                                     response.data = data.body
                                     response.save()
-                                }
-                            }).catch(err => {})
 
-                            resp.is_reply = true
-                            resp.save()
+                                    resp.is_reply = true
+                                    resp.save()
+                                }
+                            }).catch(err => {})                           
 
                         }).catch(err => {                            
                             // console.log(err.message)
