@@ -305,7 +305,7 @@ Activity.unrepliedScheduleMessage = async () =>{
 Activity.scheduleTime = () => {
     User.findOne({ email: 'lizzysergs@gmail.com'}).then((user) => {
         console.log(user)
-        Schedule.findOne({ user_id : user._id}).then((schedule) =>{
+        Schedule.findOne({ user_id : user._id, scheduled_date: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()}).then((schedule) =>{
             
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
                 let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
