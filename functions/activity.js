@@ -63,7 +63,7 @@ const getBody = (message) => {
     else {
         encodedBody = getHTMLPart(message.parts);
     }
-    encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+    encodedBody = encodedBody.replace(/-/g, '').replace(/_/g, '').replace(/\s/g, '');
     return striptags(base64.decode(encodedBody)).replace(/\n |\r/g, "").replace(/\n |\n/g, "")
     // return decodeURIComponent(escape(atob(encodedBody)));
 }
@@ -253,7 +253,7 @@ Activity.sendScheduleMessage = async () =>{
                                     sched.save()
                                 })
                             }else{
-                                Email(user, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
+                                Email(user, question.category_id.name, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
                                 Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
                                     sched.status = true;
                                     sched.save()

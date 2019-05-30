@@ -12,7 +12,8 @@ const ResponseService = require('../Modules/Site/Service/ResponseService')
 cron.schedule("*/01 * * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 2")
-    try {       
+    try {        
+        ResponseService.logic()     
         Activity.scheduleTime()  
     } catch (err) {
         console.log(err)

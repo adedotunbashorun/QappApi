@@ -3,6 +3,7 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const Response = require('../Models/Response')
 const Archieve = require('../Models/Archieve')
+const User = require('../../User/Models/User')
 const Schedule = require('../Models/Schedule')
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -99,20 +100,31 @@ class ResponseService {
                     datas.push(result)
                     let data = result
                     let str = data.subject
-                    let schedule = str.split(' ')                        
-                    Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2], _id: schedule[3] }], is_reply: false }).then((resp) => {
-                        let response = new Response()
-                        response.schedule_id = resp._id
-                        response.user_id = resp.user_id
-                        response.question_id = resp.question_id
-                        response.from = data.from
-                        response.data = data.body
-                        response.save()
+                    let rs =str.replace(/</g, '').replace(/>/g,'')
+                    let schedule = rs.split(' ')                        
+                    let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+                    User.findOne({ email: schedule[1] }).then((user)=>{
+                        Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
+                            Response.find({data: data.body}).then( res =>{
+                                if(res.length === 0){
+                                    let response = new Response()
+                                    response.schedule_id = resp._id
+                                    response.user_id = resp.user_id
+                                    response.question_id = resp.question_id
+                                    response.from = data.from
+                                    response.data = data.body
+                                    response.save()
+                                }
+                            }).catch(err => {})
 
-                        resp.is_reply = true
-                        resp.save()
+                            resp.is_reply = true
+                            resp.save()
 
-                    }).catch(err => {
+                        }).catch(err => {                            
+                            // console.log(err.message)
+                            return err.message
+                        })
+                    }).catch(err =>{
                         Archieve.find({data: data.body}).then( res =>{
                             if(res.length === 0){
                                 let arc = new Archieve()
@@ -121,8 +133,6 @@ class ResponseService {
                                 arc.save()                        
                             }
                         }).catch(err => {})
-                        // console.log(err.message)
-                        return err.message
                     })
                     return datas                    
                 });
