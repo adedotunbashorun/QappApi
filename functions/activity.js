@@ -313,38 +313,7 @@ Activity.unrepliedScheduleMessage = async () =>{
 }
 
 Activity.scheduleTime = () => {
-    User.findOne({ email: 'lizzysergs@gmail.com'}).then((user) => {
-        Schedule.findOne({ user_id : user._id, scheduled_date: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()}).then((schedule) =>{
-            
-                let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
-                let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                if (schedule && schedule_date == current_date ){
-                    Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
-                        if(user.medium == 'Sms'){
-                            Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
-                            Schedule.findOne({ _id: schedule._id }).then((sched) => {
-                                sched.status = true;
-                                sched.save()
-                            })
-                        }else{
-                            let data = {
-                                email: 'adedotunolawale@gmail.com'
-                            }
-                            Email(user, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
-                            Email(data, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
-                            Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
-                                sched.status = true;
-                                sched.save()
-                            })
-                        }
-                    }).catch(err =>{
-                        throw new Error(err)
-                    })
-                }
-        }).catch(err => {
-            throw new Error(err)
-        })
-    })
+    
     User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
         if (user) {
 
