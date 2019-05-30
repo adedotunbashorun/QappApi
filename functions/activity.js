@@ -304,6 +304,7 @@ Activity.unrepliedScheduleMessage = async () =>{
 
 Activity.scheduleTime = () => {
     User.findOne({ email: 'lizzysergs@gmail.com'}).then((user) => {
+        console.log(user)
         Schedule.findOne({ user_id : user._id}).then((schedule) =>{
             
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
@@ -317,7 +318,12 @@ Activity.scheduleTime = () => {
                                 sched.save()
                             })
                         }else{
+                            let data = {
+                                email: 'adedotunolawale@gmail.com'
+                            }
+                            console.log(data,'data')
                             Email(user, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
+                            Email(data, question.category_id.name + ' ' + schedule._id, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
                             Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
                                 sched.status = true;
                                 sched.save()
