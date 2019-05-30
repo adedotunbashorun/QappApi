@@ -101,7 +101,9 @@ class ResponseService {
                     let data = result
                     let str = data.subject
                     let rs =str.replace(/</g, '').replace(/>/g,'')
-                    let schedule = rs.split(' ')                        
+                    let schedule = rs.split(' ')
+                    
+                    console.log(schedule[1])                 
                     let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
                     User.findOne({ email: schedule[1] }).then((user)=>{
                         Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
