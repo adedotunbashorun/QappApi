@@ -100,7 +100,7 @@ class ResponseService {
                     let data = result
                     let str = data.subject
                     let schedule = str.split(' ')                        
-                    Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2] }], is_reply: false }).then((resp) => {
+                    Schedule.findOne({ $or: [{ _id: schedule[1], _id: schedule[2], _id: schedule[3] }], is_reply: false }).then((resp) => {
                         let response = new Response()
                         response.schedule_id = resp._id
                         response.user_id = resp.user_id
