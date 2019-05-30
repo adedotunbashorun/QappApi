@@ -102,6 +102,7 @@ class ResponseService {
                     let str = data.from
                     let rs =str.replace(/</g, '').replace(/>/g,'')
                     let schedule = rs.split(' ')
+                    
                     console.log(schedule[1],schedule[2]+'  '+ schedule[3])                 
                     let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
                     
