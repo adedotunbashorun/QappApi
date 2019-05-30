@@ -6,21 +6,31 @@ const Question = require('../Modules/Question/Models/Question')
 const User = require('../Modules/User/Models/User')
 const request = require('request')
 var nodemailer = require("nodemailer")
+var sgTransport = require("nodemailer-sendgrid-transport")
 var base64 = require('js-base64').Base64;
 var striptags = require('striptags');
 const config = require('../qapp.json')
 
-let options2 = {
-    host: 'smtp.googlemail.com', // Gmail Host
-    port: 465, // Port
-    secure: true, // this is true as port is 465
+
+
+var options = {
     auth: {
-        user: config.GMAIL_USERNAME, //Gmail username
-        pass: config.GMAIL_PASSWORD // Gmail password
+        api_user: process.env.SENDGRID_USERNAME,
+        api_key: process.env.SENDGRID_PASSWORD
     }
 }
+var client = nodemailer.createTransport(sgTransport(options))
+// let options2 = {
+//     host: 'smtp.googlemail.com', // Gmail Host
+//     port: 465, // Port
+//     secure: true, // this is true as port is 465
+//     auth: {
+//         user: config.GMAIL_USERNAME, //Gmail username
+//         pass: config.GMAIL_PASSWORD // Gmail password
+//     }
+// }
 
-var client = nodemailer.createTransport(options2)
+// var client = nodemailer.createTransport(options2)
 
 var fs = require('fs')
 const Activity = {}
