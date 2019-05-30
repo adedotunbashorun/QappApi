@@ -11,13 +11,12 @@ var striptags = require('striptags');
 const config = require('../qapp.json')
 
 let options2 = {
-    service: 'gmail',
     host: 'smtp.googlemail.com', // Gmail Host
-    port: 587, // Port
-    secure: false, // this is true as port is 465
+    port: 465, // Port
+    secure: true, // this is true as port is 465
     auth: {
-        user: 'adedotunolawale@gmail.com', //Gmail username
-        pass: 'professionals@2014'  // Gmail password
+        user: config.GMAIL_USERNAME, //Gmail username
+        pass: config.GMAIL_PASSWORD // Gmail password
     }
 }
 
