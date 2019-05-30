@@ -82,7 +82,7 @@ class ResponseService {
         gmail.users.messages.list({
             'userId': 'me',
             'labelIds': 'INBOX',
-            'maxResults': 100
+            'maxResults': 10
         }, (err, response) => {
             if(err){
                 return err
@@ -113,10 +113,14 @@ class ResponseService {
                         resp.save()
 
                     }).catch(err => {
-                        let arc = new Archieve()
-                        arc.from = data.from
-                        arc.data = data.body
-                        arc.save()
+                        Archieve.find({data: data.body}).then( res =>{
+                            if(res.length === 0){
+                                let arc = new Archieve()
+                                arc.from = data.from
+                                arc.data = data.body
+                                arc.save()                        
+                            }
+                        }).catch(err => {})
                         // console.log(err.message)
                         return err.message
                     })
