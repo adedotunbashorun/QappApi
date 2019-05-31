@@ -9,10 +9,10 @@ class CategoryController {
     static create(req, res, next) {
         try {
             if (!req.body.name) {
-                res.status(422).json({ 'error': 'Please provide name' })
+                return res.status(422).json({ 'error': 'Please provide name' })
             }
             if (!req.body.description) {
-                res.status(422).json({ 'error': 'Please provide description' })
+                return res.status(422).json({ 'error': 'Please provide description' })
             }
             const category = new Category(req.body)
             category.save(function (error) {
@@ -60,8 +60,8 @@ class CategoryController {
             if (error) {
                 return res.json({ error: error, msg: error.message })
             } else {
-                category.name = req.body.name
-                category.description = req.body.description
+                category.name = (req.body.name) ? req.body.name : category.name
+                category.description = (req.body.description) ?req.body.description  : category.description
                 category.save()
                 return res.status(201).json({ msg: 'Category Successfully updated.' })
             }

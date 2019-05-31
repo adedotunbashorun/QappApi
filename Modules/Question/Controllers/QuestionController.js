@@ -7,13 +7,13 @@ class QuestionController {
     static create(req, res, next) {
         try {
             if (!req.body.category_id || req.body.category_id == null) {
-                res.status(422).json({ 'error': 'Please provide category of question' })
+                return res.status(422).json({ 'error': 'Please provide category of question' })
             }
             if (!req.body.subject) {
-                res.status(422).json({ 'error': 'Please provide name' })
+                return res.status(422).json({ 'error': 'Please provide name' })
             }
             if (!req.body.description) {
-                res.status(422).json({ 'error': 'Please provide description' })
+                return res.status(422).json({ 'error': 'Please provide description' })
             }
             const question = new Question(req.body)
             question.save(function (error) {
@@ -72,9 +72,9 @@ class QuestionController {
             if (error) {
                 return res.json({ error: error, msg: error.message })
             } else {
-                question.category_id = req.body.category_id
-                question.subject = req.body.subject
-                question.description = req.body.description
+                question.category_id = (req.body.category_id) ? req.body.category_id : question.category_id
+                question.subject = (req.body.subject) ? req.body.subject : question.subject
+                question.description = (req.body.description) ? req.body.description : question.description
                 question.save()
                 return res.status(201).json({ msg: 'Question Successfully updated.' })
             }
