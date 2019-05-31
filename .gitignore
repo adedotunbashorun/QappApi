@@ -1,8 +1,4 @@
 node_modules
 .env
-<<<<<<< HEAD
 package-lock.json
 .qapp.json
-=======
-qapp.json
->>>>>>> 7c5595f43cfe68053a2db37e5227ce9dc813ac48
