@@ -30,7 +30,7 @@ router.get('/activities', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getAll(req, res, next)
 })
 
-router.get('/incomming/message',(req,res,next) =>{
+router.post('/incomming/message',(req,res,next) =>{
     ExtraController.userSmsResponse(req,res,next)
 })
 

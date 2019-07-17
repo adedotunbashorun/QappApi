@@ -7,10 +7,12 @@ const User = require('../Modules/User/Models/User')
 const request = require('request')
 var nodemailer = require("nodemailer")
 var sgTransport = require("nodemailer-sendgrid-transport")
-var base64 = require('js-base64').Base64;
-var striptags = require('striptags');
+var base64 = require('js-base64').Base64
+var striptags = require('striptags')
 const config = require('../qapp.json')
-
+const accountSid = config.accountSid
+const authToken = config.authToken
+const clients = require('twilio')(accountSid, authToken)
 
 
 var options = {
@@ -209,7 +211,18 @@ Activity.Sms = (number,message) => {
     Sms(number,message)
 }
 
-const Sms = (number, message) => {
+const Sms = (number, msg) => {
+    clients.messages
+    .create({
+        body: msg,
+        from: config.TwilioNumber,
+        to: number
+    })
+  .then(message => console.log(message.sid))
+  .catch(err => { console.log(err)});    
+}
+
+const SmsEngageSpark = (number, message) => {
     var options = {
         method: 'POST',
         json: true,

@@ -12,9 +12,9 @@ const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 const Activity = require('../../../functions/activity')
 const TOKEN_PATH = './token.json';
 
-let client_id = '901575350388-bemr326mj23hbtbb9sg70l2p83i10vgu.apps.googleusercontent.com';
-let apiKey = 'AIzaSyCq2AW4pGDHRSzBouk_maitgu9SOq6n_A8';
-let client_secret = "sbzqVCE_E55fuUayWDBvXlp5";
+let client_id = '673275576332-gum8j3g2s7i5o80eldvvkrej5i4m61kb.apps.googleusercontent.com';
+let apiKey = 'AIzaSyCKGqCjqj0VKLpCLCn7TtSiPGuiM9YJqC8';
+let client_secret = "3h9qiIVXWl4b4nlbFxVScG-m";
 let redirect_uris = ["http://localhost:5000", "https://qappdevtestapi.herokuapp.com"]
 
 class ResponseService {
