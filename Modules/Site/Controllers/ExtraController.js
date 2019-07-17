@@ -21,39 +21,38 @@ class ExtraController {
 
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
-        let str = req.query.message
-        let schedule = str.split(' ',1)
+        let str = req.body.Body
         let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-        // User.findOne({ phone: req.query.from }).then((user)=>{
-        //     Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
+        User.findOne({ phone: req.body.From }).then((user)=>{
+            Schedule.findOne({ user_id: user._id , scheduled_date: current_date, is_reply: false }).then((resp) => {
 
-        //         let response = new Response()
-        //         response.schedule_id = resp._id
-        //         response.user_id = resp.user_id
-        //         response.question_id = resp.question_id
-        //         response.from = req.query.from
-        //         response.data = req.query.message
-        //         response.save()
+                let response = new Response()
+                response.schedule_id = resp._id
+                response.user_id = resp.user_id
+                response.question_id = resp.question_id
+                response.from = req.body.From
+                response.data = req.body.Body
+                response.save()
 
-        //         resp.is_reply = true
-        //         resp.save()
+                resp.is_reply = true
+                resp.save()
 
-        //         return res.status(201).json('successfully received') 
+                return res.status(201).json('successfully received') 
 
-        //     }).catch(err => {
-        //         let arc = new Archieve()
-        //         arc.from = req.query.from
-        //         arc.data = req.query.message
-        //         arc.save()
-        //         return res.status(401).json(err.message)
-        //     }) 
-        // }).catch((err) =>{
-        //     let arc = new Archieve()
-        //     arc.from = req.query.from
-        //     arc.data = req.query.message
-        //     arc.save()
-        //     return res.status(401).json(err.message) 
-        // })   
+            }).catch(err => {
+                let arc = new Archieve()
+                arc.from = req.body.From
+                arc.data = req.body.Body
+                arc.save()
+                return res.status(401).json(err.message)
+            }) 
+        }).catch((err) =>{
+            let arc = new Archieve()
+            arc.from = req.body.From
+            arc.data = req.body.Body
+            arc.save()
+            return res.status(401).json(err.message) 
+        })   
     }
 
     static userEmailResponse(req, res, next) {
