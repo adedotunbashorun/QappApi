@@ -14,13 +14,11 @@ const result = {}
 class ExtraController {
 
     static userSmsResponse(req,res,next){
-        console.log(req)
-        const twiml = new MessagingResponse();
-
-        twiml.message('The Robots are coming! Head for the hills!');
+        const twiml = new MessagingResponse(); 
+        twiml.message('Thank you, your message has been received!');
 
         res.writeHead(200, {'Content-Type': 'text/xml'});
-        res.end(twiml.toString());
+        res.end(twiml.toString());       
         let str = req.body.Body
         let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
         User.findOne({ phone: req.body.From }).then((user)=>{
