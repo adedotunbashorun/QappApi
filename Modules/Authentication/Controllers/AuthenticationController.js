@@ -57,6 +57,30 @@ class AuthenticationController{
         })
     }
 
+    static ActivateUser(req, res, next) {
+        try{
+            User.findOne({ _id: req.params.id }).then((user) => {
+                user.temporarytoken = null
+                user.is_active =  (user.is_active == true) ? false : true
+                user.save()
+                if(user.is_active == false) {
+                    Activity.Email(user, 'Account De-activated', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ', Thank you for using ServeMe. Your Account has been de-activated please contact support for re-activation @ weserve.com.ng \n\r Thank You.'))
+                    return res.status(201).json({msg:'user de-activation successful'})
+                }
+                else{
+                    Activity.Email(user, 'Account Activated', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ', Thank you for registering at ServeMe. Your Account has been activated successfully.'))
+                    return res.status(201).json({msg:'user activation successful'});
+                }          
+
+            }).catch((err)=>{
+                console.log(err.message)
+                return res.status(401).json(err);
+            })
+        } catch (error) {
+            return res.json({ error: error, msg: error.message })
+        }
+    }
+
     static login(req, res, next) {
         passport.authenticate('local', { session: false }, function (err, user, info) {
             if (err) { return res.status(501).json(err) }
