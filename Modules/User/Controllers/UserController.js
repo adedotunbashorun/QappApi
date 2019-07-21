@@ -98,6 +98,7 @@ class UserController {
                     if (user) {
                         var pword = Activity.makeid(6)
                         user.password = User.hashPassword(pword)
+                        user.reset_password =  true
                         Activity.Email(user, 'Forget Password', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ' This is your new default password.<br><span style="color: #1D4BB7">' + pword + '</span><br/>kindly log on to the application to set a new one.</p>'))
                         user.save()
                         Activity.activity_log(req, user._id, 'user reset password') 
@@ -120,10 +121,11 @@ class UserController {
                 } else {
                     if (user.isValid(req.body.old_password)) {
                         user.password = User.hashPassword(req.body.password)
+                        user.reset_password =  false
                         Activity.Email(user, 'Reset Password', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ',You have successfully reset your password,<br>Thank you.</p>'))
                         user.save()
                         Activity.activity_log(req, user._id, 'reset password')
-                        return res.status(201).json({ msg: "password reset successfully." })
+                        return res.status(201).json({ msg: "password reset successfully.", user : user})
                     } else {
                         return res.status(501).json({ msg: "your old password is incorrect, please check your old password." })
                     }

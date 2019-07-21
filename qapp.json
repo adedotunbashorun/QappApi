@@ -1,6 +1,6 @@
 {
     "app_name": "Qapp",
-    "email": "adedotunolawale@gmail.com",
+    "email": "pm.study2019@gmail.com",
     "production": false,
     "sendgrid_user_name": "adedotunbashorun",
     "sendgrid_password": "professionals@2019",
@@ -8,8 +8,8 @@
     "client_secret": "sbzqVCE_E55fuUayWDBvXlp5",
     "apiKey": "AIzaSyCq2AW4pGDHRSzBouk_maitgu9SOq6n_A8",
     "scopes": "https: //www.googleapis.com/auth/gmail.readonly",
-    "GMAIL_USERNAME": "adedotunolawale@gmail.com",
-    "GMAIL_PASSWORD": "professionals@2014",
+    "GMAIL_USERNAME": "pm.study2019@gmail.com",
+    "GMAIL_PASSWORD": "2019PMPersonality",
     "accountSid" : "AC86f87f06165bce514fd93c602a537fd9",
     "authToken": "4781b4bc7b853073058fa036bbb49e2e",
     "TwilioNumber": "+16042565562"

@@ -59,7 +59,7 @@ class ExtraController {
     }
 
     static getResponse(req, res, next) {        
-        Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').then((responses) => {
+        Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').sort('createdAt').then((responses) => {
             return res.status(201).json({ responses: responses})
         }).catch(err => {
             return res.status(401).json(err)
@@ -67,7 +67,7 @@ class ExtraController {
     }
 
     static getArchieve(req, res, next) {
-        Archieve.find({}).then((archieves) => {
+        Archieve.find({}).sort('createdAt').then((archieves) => {
             return res.status(201).json({ archieves: archieves })
         }).catch(err => {
             return res.status(401).json(err)

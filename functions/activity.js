@@ -37,6 +37,15 @@ var client = nodemailer.createTransport(sgTransport(options))
 var fs = require('fs')
 const Activity = {}
 
+Activity.makeid = function(length) {
+    var text = ""
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+    for (var i = 0; i < length; i++){
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }console.log(text)
+    return text
+}
 
 Activity.appendMessageRow = (message) => {
     let data = { from: '', subject: '', date: '', body: '' }
@@ -59,7 +68,7 @@ const getHeader = (headers, index) => {
 
 const getBody = (message) => {
     let encodedBody = '';
-    if (typeof message.parts === 'undefined') {
+    if (typeof message.parts === 'undefined' || message.parts === '' ) {
         encodedBody = message.body.data;
     }
     else {
@@ -72,9 +81,10 @@ const getBody = (message) => {
 
 const getHTMLPart = (arr) => {
     for (var x = 0; x <= arr.length; x++) {
+        console.log(arr[x].parts)
         if (typeof arr[x].parts === 'undefined') {
             if (arr[x].mimeType === 'text/html') {
-                return arr[x].body.data;
+                return arr[x].body.data || arr[x].body;
             }
         }
         else {
