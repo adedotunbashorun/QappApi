@@ -23,16 +23,17 @@ const clients = require('twilio')(accountSid, authToken)
 // }
 // var client = nodemailer.createTransport(sgTransport(options))
 let options2 = {
-    host: 'smtp.googlemail.com', // Gmail Host
-    port: 465, // Port
-    secure: true, // this is true as port is 465
+    // host: 'smtp.googlemail.com', // Gmail Host
+    // port: 465, // Port
+    // secure: true, // this is true as port is 465
+    service: "Gmail",
     auth: {
-        user: "adedotunolawale@gmail.com", //Gmail username
-        pass: "professionals@2014" // Gmail password
+        user: "pm.study2019@gmail.com", //Gmail username
+        pass: "2019PMPersonality" // Gmail password
     }
 }
 
-let client = nodemailer.createTransport(options2)
+let client = nodemailer.createTransport("SMTP",options2)
 
 var fs = require('fs')
 const Activity = {}
