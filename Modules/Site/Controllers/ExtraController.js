@@ -66,6 +66,14 @@ class ExtraController {
         })
     }
 
+    static getUserResponse(req, res, next) {        
+        Response.find({user_id: req.params.user_id}).populate('schedule_id').populate('question_id').sort('createdAt').then((responses) => {
+            return res.status(201).json({ responses: responses})
+        }).catch(err => {
+            return res.status(401).json(err)
+        })
+    }
+
     static getArchieve(req, res, next) {
         Archieve.find({}).sort('createdAt').then((archieves) => {
             return res.status(201).json({ archieves: archieves })

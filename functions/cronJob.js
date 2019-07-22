@@ -14,8 +14,8 @@ cron.schedule("*/01 * * * *", function () {
     console.log("Running Cron Job 2")
     try {        
         // Activity.Sms('+2349034268873','Hello from test serve')
-        ResponseService.logic()     
-        Activity.scheduleTime()  
+        // ResponseService.logic()     
+        // Activity.scheduleTime()  
     } catch (err) {
         console.log(err)
     }

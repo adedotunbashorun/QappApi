@@ -15,13 +15,14 @@ const authToken = config.authToken
 const clients = require('twilio')(accountSid, authToken)
 
 
-var options = {
+
+let options = {
     auth: {
         api_user: process.env.SENDGRID_USERNAME,
         api_key: process.env.SENDGRID_PASSWORD
     }
 }
-var client = nodemailer.createTransport(sgTransport(options))
+let client = nodemailer.createTransport(sgTransport(options))
 // let options2 = {
 //     host: 'smtp.googlemail.com', // Gmail Host
 //     port: 465, // Port
@@ -127,18 +128,18 @@ const Email = function(data, subject, message){
 
 
 Activity.html = (data) => {
-    html(data)
+    return data
 }
 
 const html = (data) =>{
-    return '<div id="content" style="background-color: #1D4BB7;width:100%;">' +
-        '<nav>' +
-        '<div class="container-fluid">' +
-        '<span><a href="https://qappdevtest.herokuapp.com"><img src="https://qappdevtest.herokuapp.com/images/Blueform_LOGO_MARK_COLORED_NO_BG.png" style="width: 80px; height: 45px; padding:10px" class="img-responsive"><h3>QAPP</h3></a></span>' +
-        '</div>' +
-        '</nav>' +
-        '<div style="background-color: #fefefe;padding:20px;color:#000;">' + data + '</div>' +
-        '</div>'
+    return `<div id="content" style="background-color: #1D4BB7;width:100%;">
+                <nav>
+                    <div class="container-fluid">
+                        <span><a href="https://qappdevtest.herokuapp.com"><img src="https://qappdevtest.herokuapp.com/images/Blueform_LOGO_MARK_COLORED_NO_BG.png" style="width: 80px; height: 45px; padding:10px" class="img-responsive"><h3>QAPP</h3></a></span>
+                    </div>
+                </nav>
+            <div style="background-color: #fefefe;padding:20px;color:#000;">${data} </div>
+        </div>`
 }
 
 Activity.SupportEmail = function(data, subject, message) {

@@ -58,6 +58,10 @@ router.get('/all/count',[Guard.isValidUser], (req, res, next) => {
     ExtraController.countAllDoc(req, res, next)
 })
 
+router.get('/responses/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ExtraController.getUserResponse(req, res, next)
+})
+
 router.get('/my_activities/:user_id', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getuserAll(req, res, next)
 })
