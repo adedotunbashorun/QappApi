@@ -115,7 +115,7 @@ const Email = function(data, subject, message){
 
         client.sendMail(email, function (err, info) {
             if (err) {
-                console.log(err)
+                console.log(err, 'hy')
             } else {
                 console.log("Message sent: " + info.messageId)
             }
