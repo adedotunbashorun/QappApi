@@ -15,24 +15,24 @@ const authToken = config.authToken
 const clients = require('twilio')(accountSid, authToken)
 
 
-// var options = {
-//     auth: {
-//         api_user: process.env.SENDGRID_USERNAME,
-//         api_key: process.env.SENDGRID_PASSWORD
-//     }
-// }
-// var client = nodemailer.createTransport(sgTransport(options))
-let options2 = {
-    host: 'smtp.googlemail.com', // Gmail Host
-    port: 465, // Port
-    secure: true, // this is true as port is 465
+var options = {
     auth: {
-        user: "adedotunolawale@gmail.com", //Gmail username
-        pass: "professionals@2014" // Gmail password
+        api_user: process.env.SENDGRID_USERNAME,
+        api_key: process.env.SENDGRID_PASSWORD
     }
 }
+var client = nodemailer.createTransport(sgTransport(options))
+// let options2 = {
+//     host: 'smtp.googlemail.com', // Gmail Host
+//     port: 465, // Port
+//     secure: true, // this is true as port is 465
+//     auth: {
+//         user: config.GMAIL_USERNAME, //Gmail username
+//         pass: config.GMAIL_PASSWORD // Gmail password
+//     }
+// }
 
-let client = nodemailer.createTransport(options2)
+// var client = nodemailer.createTransport(options2)
 
 var fs = require('fs')
 const Activity = {}
@@ -268,7 +268,7 @@ Activity.sendScheduleMessage = async () =>{
                 if (schedule && schedule_date === current_date ){
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
-                            if(user.medium == 'Sms'){
+                            if(user.medium === 'Sms'){
                                 Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
                                 Schedule.findOne({ _id: schedule._id }).then((sched) => {
                                     sched.status = true;
@@ -308,7 +308,7 @@ Activity.unrepliedScheduleMessage = async () =>{
                 if (schedule && schedule_date === current_date ){
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
-                            if(user.medium == 'Sms'){
+                            if(user.medium === 'Sms'){
                                 Sms('2349034268873', "Hi adedotun,\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
                                 Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
                                 Sms(user.phone, "If you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion.")
