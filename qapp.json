@@ -2,8 +2,6 @@
     "app_name": "Qapp",
     "email": "pm.study2019@gmail.com",
     "production": false,
-    "sendgrid_user_name": "adedotunbashorun",
-    "sendgrid_password": "professionals@2019",
     "client_id": "901575350388-bemr326mj23hbtbb9sg70l2p83i10vgu.apps.googleusercontent.com",
     "client_secret": "sbzqVCE_E55fuUayWDBvXlp5",
     "apiKey": "AIzaSyCq2AW4pGDHRSzBouk_maitgu9SOq6n_A8",
