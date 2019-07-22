@@ -355,6 +355,9 @@ Activity.scheduleTime = () => {
                     for (let i = 0; i < categories.length; ++i) {                        
                         let schedule_date = randomDate(new Date(), new Date(Date.now() + 12096e5), 9, 10)
                         let date = schedule_date.getFullYear() + '-' + (schedule_date.getMonth() + 1) + '-' + schedule_date.getDate()
+                        if(schedule_date.getDay() === 0){
+                            continue
+                        }
                         Schedule.find({ user_id: user._id,scheduled_date: date }).countDocuments().then(count => {
                             if (count === 1) {     
                                 console.log('exists')              
