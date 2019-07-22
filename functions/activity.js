@@ -27,8 +27,8 @@ let options2 = {
     port: 465, // Port
     secure: true, // this is true as port is 465
     auth: {
-        user: "pm.study2019@gmail.com", //Gmail username
-        pass: "2019PMPersonality" // Gmail password
+        user: "adedotunolawale@gmail.com", //Gmail username
+        pass: "professionals@2014" // Gmail password
     }
 }
 
