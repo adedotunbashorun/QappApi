@@ -81,7 +81,6 @@ const getBody = (message) => {
 
 const getHTMLPart = (arr) => {
     for (var x = 0; x <= arr.length; x++) {
-        console.log(arr[x].parts)
         if (typeof arr[x].parts === 'undefined') {
             if (arr[x].mimeType === 'text/html') {
                 return arr[x].body.data || arr[x].body;
