@@ -21,7 +21,7 @@ cron.schedule("*/01 * * * *", function () {
     }
 })
 
-cron.schedule("* 14 * * *", function () {
+cron.schedule("* 15 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 3")
     try {
