@@ -23,17 +23,16 @@ const clients = require('twilio')(accountSid, authToken)
 // }
 // var client = nodemailer.createTransport(sgTransport(options))
 let options2 = {
-    // host: 'smtp.googlemail.com', // Gmail Host
-    // port: 465, // Port
-    // secure: true, // this is true as port is 465
-    service: "Gmail",
+    host: 'smtp.googlemail.com', // Gmail Host
+    port: 465, // Port
+    secure: true, // this is true as port is 465
     auth: {
         user: "pm.study2019@gmail.com", //Gmail username
         pass: "2019PMPersonality" // Gmail password
     }
 }
 
-let client = nodemailer.createTransport("SMTP",options2)
+let client = nodemailer.createTransport(options2)
 
 var fs = require('fs')
 const Activity = {}
@@ -266,7 +265,7 @@ Activity.sendScheduleMessage = async () =>{
                 let schedule = schedules[i]
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
                 let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                if (schedule && schedule_date == current_date ){
+                if (schedule && schedule_date === current_date ){
                     User.findOne({ _id: schedule.user_id}).then((user) => {
                         Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
                             if(user.medium == 'Sms'){
