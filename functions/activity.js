@@ -75,6 +75,7 @@ const getBody = (message) => {
     else {
         encodedBody = getHTMLPart(message.parts);
     }
+
     encodedBody = encodedBody.replace(/-/g, '').replace(/_/g, '').replace(/\s/g, '');
     return striptags(base64.decode(encodedBody)).replace(/\n |\r/g, "").replace(/\n |\n/g, "")
     // return decodeURIComponent(escape(atob(encodedBody)));
@@ -82,14 +83,15 @@ const getBody = (message) => {
 
 const getHTMLPart = (arr) => {
     for (var x = 0; x <= arr.length; x++) {
-        if (typeof arr[x].parts === 'undefined') {
+        // if (typeof arr[x].parts === 'undefined') {
             if (arr[x].mimeType === 'text/html') {
                 return arr[x].body.data || arr[x].body;
             }
-        }
-        else {
-            return getHTMLPart(arr[x].parts);
-        }
+            return (arr[x].body.data) ? arr[x].body.data : 'empty body received, please check your gmail to confirm mail message.';
+        // }
+        // else {
+        //     return getHTMLPart(arr[x].parts);
+        // }
     }
     return '';
 }
@@ -272,7 +274,7 @@ Activity.sendScheduleMessage = async () =>{
                             if(user.medium === 'Sms'){
                                 Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
                                 Schedule.findOne({ _id: schedule._id }).then((sched) => {
-                                    sched.status = true;
+                                    sched.status = true                                    
                                     sched.save()
                                 })
                             }else{

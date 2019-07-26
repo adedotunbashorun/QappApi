@@ -9,7 +9,8 @@ const ScheduleSchema = new Schema({
     question_id: { type: Schema.ObjectId, ref: 'Question', default: null },
     scheduled_date: { type: String, required: true },
     status:{type:Boolean, default: false},
-    is_reply: { type: Boolean, default: false }
+    is_reply: { type: Boolean, default: false },
+    replied_date: { type: String, required: true }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Schedule', ScheduleSchema)

@@ -13,12 +13,7 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const result = {}
 class ExtraController {
 
-    static userSmsResponse(req,res,next){
-        // const twiml = new MessagingResponse(); 
-        // twiml.message('Thank you, your message has been received!');
-
-        // res.writeHead(200, {'Content-Type': 'text/xml'});
-        // res.end(twiml.toString());       
+    static userSmsResponse(req,res,next){  
         let str = req.body.Body
         let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
         User.findOne({ phone: req.body.From }).then((user)=>{
@@ -33,6 +28,7 @@ class ExtraController {
                 response.save()
 
                 resp.is_reply = true
+                resp.replied_date = new Date()
                 resp.save()
 
                 return res.status(201).json('successfully received') 
@@ -59,7 +55,7 @@ class ExtraController {
     }
 
     static getResponse(req, res, next) {        
-        Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').sort('createdAt').then((responses) => {
+        Response.find({}).populate('schedule_id').populate('user_id').populate('question_id').sort('-createdAt').then((responses) => {
             return res.status(201).json({ responses: responses})
         }).catch(err => {
             return res.status(401).json(err)
@@ -67,7 +63,7 @@ class ExtraController {
     }
 
     static getUserResponse(req, res, next) {        
-        Response.find({user_id: req.params.user_id}).populate('schedule_id').populate('question_id').sort('createdAt').then((responses) => {
+        Response.find({user_id: req.params.user_id}).populate('schedule_id').populate('question_id').sort('-createdAt').then((responses) => {
             return res.status(201).json({ responses: responses})
         }).catch(err => {
             return res.status(401).json(err)
@@ -75,7 +71,7 @@ class ExtraController {
     }
 
     static getArchieve(req, res, next) {
-        Archieve.find({}).sort('createdAt').then((archieves) => {
+        Archieve.find({}).sort('-createdAt').then((archieves) => {
             return res.status(201).json({ archieves: archieves })
         }).catch(err => {
             return res.status(401).json(err)
@@ -127,10 +123,23 @@ class ExtraController {
                 return res.status(201).json({ msg: 'you are a subscribed member, thanks you!' })
             else
                 Activity.alertEmail(req)
-                Activity.Email(req.body, 'Brax Alert', Activity.html('<p style="color: #000">Hello ' + req.body.email + '<br>, Thank you for creating a price alert at Brax Map.we will update you with our latest and cheapest deals.<br><br><br><br><br>click <a href="https://braxmap.com/unsubscribe/"' + req.body.email + '>here</a> to unsubscribe</p>'))
+                Activity.Email(req.body, 'Qapp Alert', Activity.html('<p style="color: #000">Hello ' + req.body.email + '<br>, Thank you for creating a price alert at Brax Map.we will update you with our latest and cheapest deals.<br><br><br><br><br>click <a href="https://braxmap.com/unsubscribe/"' + req.body.email + '>here</a> to unsubscribe</p>'))
                 return res.status(201).json({ msg: 'Email Alert Successfully Activated.' })
         }, function (error) {
             return res.status(501).json({ "success": false, "message": error })
+        })
+        
+    }
+
+    static sendResponse(req,res,next){ 
+        User.findById(req.body.user_id).then( user =>{
+            if(req.boby.medium === 'Sms'){
+                Activity.Sms(user.phone,req.body.message)
+            }
+            if(req.boby.medium === 'Email'){
+                Activity.Email(user, 'User Response', Activity.html('<p style="color: #000">Hello ' + user.first_name +' '+ user.last-name + ',<br>'+ req.body.message +'</p>'))
+            }
+            return res.status(201).json({ msg: 'message sent successfully!' })
         })
         
     }

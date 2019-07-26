@@ -117,6 +117,7 @@ class ResponseService {
                                     response.save()
 
                                     resp.is_reply = true
+                                    resp.replied_date = new Date()
                                     resp.save()
                                 }
                             }).catch(err => {})                           
@@ -132,7 +133,7 @@ class ResponseService {
                                 arc.from = data.from
                                 arc.data = data.body
                                 arc.save()                        
-                            }
+                            }      
                         }).catch(err => {})
                     })
                     return datas                    

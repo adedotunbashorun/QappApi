@@ -62,6 +62,10 @@ router.get('/responses/:user_id', [Guard.isValidUser], (req, res, next) => {
     ExtraController.getUserResponse(req, res, next)
 })
 
+router.post('/reply_response',[Guard.isValidUser], (req, res, next) => {
+    ExtraController.sendResponse(req, res, next)
+})
+
 router.get('/my_activities/:user_id', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getuserAll(req, res, next)
 })
