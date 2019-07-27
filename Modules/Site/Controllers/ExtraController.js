@@ -141,7 +141,7 @@ class ExtraController {
             }
             return res.status(201).json({ msg: 'message sent successfully!' })
         }).catch( err =>{
-            return res.json({ error: error, msg: error.message })
+            return res.json({ error: err, msg: err.message })
         })
         
     }
