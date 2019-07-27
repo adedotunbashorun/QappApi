@@ -133,10 +133,10 @@ class ExtraController {
 
     static sendResponse(req,res,next){ 
         User.findById(req.body.user_id).then( user =>{
-            if(req.boby.medium === 'Sms'){
+            if(req.body.medium === 'Sms'){
                 Activity.Sms(user.phone,req.body.message)
             }
-            if(req.boby.medium === 'Email'){
+            if(req.body.medium === 'Email'){
                 Activity.Email(user, 'User Response', Activity.html('<p style="color: #000">Hello ' + user.first_name +' '+ user.last-name + ',<br>'+ req.body.message +'</p>'))
             }
             return res.status(201).json({ msg: 'message sent successfully!' })
