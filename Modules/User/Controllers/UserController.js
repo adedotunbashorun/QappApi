@@ -122,8 +122,8 @@ class UserController {
                     if (user.isValid(req.body.old_password)) {
                         user.password = User.hashPassword(req.body.password)
                         user.reset_password =  false
-                        Activity.Email(user, 'Reset Password', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ',You have successfully reset your password,<br>Thank you.</p>'))
                         user.save()
+                        Activity.Email(user, 'Reset Password', Activity.html('<p style="color: #000">Hello ' + user.first_name + ' ' + user.last_name + ',You have successfully reset your password,<br>Thank you.</p>'))
                         Activity.activity_log(req, user._id, 'reset password')
                         return res.status(201).json({ msg: "password reset successfully.", user : user})
                     } else {
