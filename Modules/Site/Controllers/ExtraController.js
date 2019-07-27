@@ -137,7 +137,7 @@ class ExtraController {
                 Activity.Sms(user.phone,req.body.message)
             }
             if(req.body.medium === 'Email'){
-                Activity.Email(user, 'User Response', Activity.html('<p style="color: #000">Hello ' + user.first_name +' '+ user.last-name + ',<br>'+ req.body.message +'</p>'))
+                Activity.Email(user, 'User Response', Activity.html('<p style="color: #000">Hello ' + user.first_name +' '+ user.last_name + ',<br>'+ req.body.message +'</p>'))
             }
             return res.status(201).json({ msg: 'message sent successfully!' })
         }).catch( err =>{
