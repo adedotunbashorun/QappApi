@@ -18,9 +18,6 @@ setInterval(function() {
 var passport = require('passport')
 
 const port = config.app.port
-process.env.TZ="America/Chicago"
-
-console.log(new Date())
 
 try {
     mongoose.set('useCreateIndex', true)
