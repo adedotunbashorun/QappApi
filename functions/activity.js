@@ -263,7 +263,7 @@ const SmsEngageSpark = (number, message) => {
 Activity.sendScheduleMessage = async () =>{
     try {
         
-        Schedule.find({ status: { $ne: true}}).then((schedules) =>{
+        Schedule.find({ status: false }).then((schedules) =>{
             for(let i = 0; i < schedules.length; ++i ){
                 let schedule = schedules[i]
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
@@ -274,7 +274,7 @@ Activity.sendScheduleMessage = async () =>{
                             if(user.medium === 'Sms'){
                                 Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
                                 Schedule.findOne({ _id: schedule._id }).then((sched) => {
-                                    sched.status = true                                    
+                                    sched.status = true;                                    
                                     sched.save()
                                 })
                             }else{
