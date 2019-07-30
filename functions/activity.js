@@ -262,8 +262,8 @@ const SmsEngageSpark = (number, message) => {
 
 Activity.sendScheduleMessage = async () =>{
     try {
-        
-        Schedule.find({ status: false }).then((schedules) =>{
+        let today = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+        Schedule.find({ status: false, schedule_date: today }).then((schedules) =>{
             for(let i = 0; i < schedules.length; ++i ){
                 let schedule = schedules[i]
                 let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
