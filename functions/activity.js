@@ -365,109 +365,121 @@ Activity.unrepliedScheduleMessage = async () =>{
         console.log()
     }
 }
+Activity.scheduleTimes = async () => {
+  try {
+    const user = await User.findOne(
+      { is_scheduled: { $ne: true }, user_type: { $ne: "admin" } },
+      null,
+      { sort: { createdAt: -1 } }
+    );
 
-Activity.scheduleTime = () => {
-    
-    User.findOne({ is_scheduled: { $ne: true }, user_type: { $ne: 'admin' } }, null, { sort: { 'createdAt': -1 } }).then((user) => {
-        if (user) {
+    if (user) {
+      try {
+        const count = await Schedule.find({
+          user_id: user._id
+        }).countDocuments();
 
-            try {
-                
-                Schedule.find({ user_id: user._id }).countDocuments().then(count => {
-                    if (count == 8) {
-                        user.is_scheduled = true
-                        user.save()                        
-                        return false
-                    } 
-                })                
-                
-                Category.find({}).sort('createdAt').limit(2).then((categories) => {
-
-                    for (let i = 0; i < categories.length; ++i) {                        
-                        let schedule_date = randomDate(new Date(), new Date(Date.now() + 12096e5), 9, 10)
-                        let date = schedule_date.getFullYear() + '-' + (schedule_date.getMonth() + 1) + '-' + schedule_date.getDate()
-                        if(schedule_date.getDay() === 0){
-                            continue
-                        }
-                        Schedule.find({ user_id: user._id,scheduled_date: date }).countDocuments().then(count => {
-                            if (count === 1) {     
-                                console.log('exists')              
-                                return false
-                            }else{
-                                Question.find({ category_id: categories[i]._id }).then((questions) => {
-                                    let result = random_item(questions)
-                                    let cat = categories[i]
-                                    // console.log(result)
-                                    if(result){
-                                        Schedule.find({ user_id: user._id, category_id: cat._id }).countDocuments().then((schedules) => {
-                                            console.log(schedules)
-                                            if (schedules < 4) {
-                                                Schedule.findOne({ user_id: user._id, question_id: result._id  }).countDocuments().then((schedule) => {
-                                                    if (schedule === 0) {
-                                                        Schedule.find({ user_id: user._id, scheduled_date: date  }).countDocuments().then((dates) => {
-                                                            if (dates === 0) {
-                                                                let schedule = new Schedule()
-                                                                schedule.user_id = user._id
-                                                                schedule.category_id = result.category_id
-                                                                schedule.question_id = result._id
-                                                                schedule.scheduled_date = date
-                                                                schedule.save()                                                                
-                                                            } else {
-                                                                return false
-                                                            }
-        
-                                                        }).catch(err => {
-                                                            console.log(err.message)
-                                                        })
-                                                        
-                                                    }else{
-                                                        return false
-                                                    }
-                                                }).catch(err => {
-                                                    console.log(err)
-                                                })
-                                            } else {
-                                                console.log('completed')
-                                            }
-                                        }).catch(err => {
-                                            console.log(err)
-                                        })
-                                    }                            
-                                }).catch(err =>{
-                                    console.log(err.message)
-                                })
-                            }
-                        }).catch(err =>{
-                            return false
-                        })
-                        setTimeout(() => {
-                            Schedule.find({ user_id: user._id,scheduled_date: date }).then(schedules => {                            
-                                if (schedules.length > 1) {
-                                    schedules.forEach(schedule =>{
-                                        Schedule.findByIdAndDelete(schedule._id).then(res =>{
-                                            if(res)
-                                                console.log('deleted')
-                                        }).catch(err =>{
-                                            return false
-                                        }) 
-                                    })
-                                }
-                            }).catch(err =>{
-                                return false
-                            })                            
-                        }, 5000);                         
-                    }
-                    
-                })              
-                
-            } catch (error) {
-                console.log(error)
-            }
-
+        if (count == 8) {
+          user.is_scheduled = true;
+          user.save();
+          return false;
         }
-    })
 
-}
+        const categories = await Category.find({})
+          .sort("createdAt")
+          .limit(2);
+
+        for (let i = 0; i < categories.length; ++i) {
+          let schedule_date = randomDate(
+            new Date(),
+            new Date(Date.now() + 12096e5),
+            9,
+            10
+          );
+          let date =
+            schedule_date.getFullYear() +
+            "-" +
+            (schedule_date.getMonth() + 1) +
+            "-" +
+            schedule_date.getDate();
+
+          const scheduleCount = await Schedule.find({
+            user_id: user._id,
+            scheduled_date: date
+          }).countDocuments();
+
+          if (scheduleCount === 1) {
+            console.log("exists");
+            return false;
+          } else {
+            const questions = await Question.find({
+              category_id: categories[i]._id
+            });
+
+            const result = random_item(questions);
+            let cat = categories[i];
+            // console.log(result)
+
+            if (result) {
+              const schedules = await Schedule.find({
+                user_id: user._id,
+                category_id: cat._id
+              }).countDocuments();
+
+              console.log(schedules);
+              if (schedules < 4) {
+                const schedule = await Schedule.findOne({
+                  user_id: user._id,
+                  question_id: result._id
+                }).countDocuments();
+
+                if (schedule === 0) {
+                  const dates = await Schedule.find({
+                    user_id: user._id,
+                    scheduled_date: date
+                  }).countDocuments();
+
+                  if (dates === 0) {
+                    let schedule = new Schedule();
+                    schedule.user_id = user._id;
+                    schedule.category_id = result.category_id;
+                    schedule.question_id = result._id;
+                    schedule.scheduled_date = date;
+                    schedule.save();
+                  } else {
+                    return false;
+                  }
+                } else {
+                  return false;
+                }
+
+                console.log(err);
+              } else {
+                console.log("completed");
+              }
+            }
+          }
+
+          const delSchedule = await Schedule.find({
+            user_id: user._id,
+            scheduled_date: date
+          });
+
+          if (delSchedule.length > 1) {
+            delSchedule.forEach(schedule => {
+              const res = Schedule.findByIdAndDelete(schedule._id);
+              if (res) console.log("deleted");
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
     
 module.exports = Activity
