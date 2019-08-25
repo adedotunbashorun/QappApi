@@ -259,42 +259,71 @@ const SmsEngageSpark = (number, message) => {
     });
 }
 
+const TodaySchedules = async () => {
+    try {
+
+        let today = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+
+        let schedules = await Schedule.find({ status: false, schedule_date: today })
+
+        return schedules
+    } catch (error) {
+        throw new Error(error.message)
+    }
+    
+}
+
+const UserData = async () => {
+    try {
+        let user = await User.findOne({ _id: schedule.user_id})
+
+        return user
+    } catch (error) {
+        throw new Error(error.message)
+    }    
+}
+
+const QuestionData = async () => {
+
+    try {
+        let question = await Question.findOne({ _id: schedule.question_id}).populate('category_id')
+
+        return question
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
 
 Activity.sendScheduleMessage = async () =>{
     try {
-        let today = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-        Schedule.find({ status: false, schedule_date: today }).then((schedules) =>{
-            for(let i = 0; i < schedules.length; ++i ){
-                let schedule = schedules[i]
-                let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
-                let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                if (schedule && schedule_date === current_date ){
-                    User.findOne({ _id: schedule.user_id}).then((user) => {
-                        Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
-                            if(user.medium === 'Sms'){
-                                Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
-                                Schedule.findOne({ _id: schedule._id }).then((sched) => {
-                                    sched.status = true;                                    
-                                    sched.save()
-                                })
-                            }else{
-                                Email(user, question.category_id.name, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))
-                                Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
-                                    sched.status = true;
-                                    sched.save()
-                                })
-                            }
-                        }).catch(err =>{
-                            throw new Error(err)
-                        })
-                    }).catch( err => {
-                        throw new Error(err)
-                    })
+
+        let schedules = await TodaySchedules();
+        
+        for(let i = 0; i < schedules.length; ++i ){
+            let schedule = schedules[i]
+
+            let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
+
+            let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+
+            if (schedule && schedule_date === current_date ){
+
+                let user = await UserData()
+
+                let question = await QuestionData()
+                
+                if(user.medium === 'Sms'){
+                    Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
+                }else{
+                    Email(user, question.category_id.name, html('Good morning ' + user.title + ' ' + user.last_name +',\r\n '+question.subject+'\r\n'+question.description))                                
                 }
+                
+                let schedule = await Schedule.findOne({ _id: schedule._id  }).then((sched) =>{
+                    sched.status = true;
+                    sched.save()
+                })
             }
-        }).catch(err => {
-            throw new Error(err)
-        })
+        }
     } catch (error) {
         console.log()
     }

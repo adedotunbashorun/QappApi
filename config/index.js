@@ -6,9 +6,9 @@ let config = {};
 if (process.env.NODE_ENV == 'production') {
     config = production;
 } else if (process.env.NODE_ENV == 'development') {
-    config = development;
+    config = production;
 }else{
-    config = local;
+    config = production;
 }
 
 module.exports = config
