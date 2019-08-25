@@ -273,7 +273,7 @@ const TodaySchedules = async () => {
     
 }
 
-const UserData = async () => {
+const UserData = async (schedule) => {
     try {
         let user = await User.findOne({ _id: schedule.user_id})
 
@@ -283,7 +283,7 @@ const UserData = async () => {
     }    
 }
 
-const QuestionData = async () => {
+const QuestionData = async (schedule) => {
 
     try {
         let question = await Question.findOne({ _id: schedule.question_id}).populate('category_id')
@@ -308,9 +308,9 @@ Activity.sendScheduleMessage = async () =>{
 
             if (schedule && schedule_date === current_date ){
 
-                let user = await UserData()
+                let user = await UserData(schedule)
 
-                let question = await QuestionData()
+                let question = await QuestionData(schedule)
                 
                 if(user.medium === 'Sms'){
                     Sms(user.phone, 'Good morning '+ user.title + ' ' + user.last_name+','+question.subject + '\r\n' +question.description)
@@ -332,35 +332,31 @@ Activity.sendScheduleMessage = async () =>{
 Activity.unrepliedScheduleMessage = async () =>{
     try {
 
-        Schedule.find({ is_reply: { $ne: true}}).then((schedules) =>{
-            for(let i = 0; i < schedules.length; ++i ){
-                let schedule = schedules[i]
-                let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
-                let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
-                if (schedule && schedule_date === current_date ){
-                    User.findOne({ _id: schedule.user_id}).then((user) => {
-                        Question.findOne({ _id: schedule.question_id}).populate('category_id').then((question) =>{
-                            if(user.medium === 'Sms'){
-                                Sms('2349034268873', "Hi adedotun,\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
-                                Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
-                                Sms(user.phone, "If you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion.")
-                                Sms(user.phone, "There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.")
-                                Sms(user.phone, "Please let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley.")
-                                
-                            }else{
-                                Email(user, question.category_id.name, html("Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley."))                                
-                            }
-                        }).catch(err =>{
-                            throw new Error(err)
-                        })
-                    }).catch( err => {
-                        throw new Error(err)
-                    })
+        let schedules = Schedule.find({ is_reply: { $ne: true}})
+        for(let i = 0; i < schedules.length; ++i ){
+            let schedule = schedules[i]
+
+            let schedule_date = new Date(schedule.scheduled_date).getFullYear() + '-' + (new Date(schedule.scheduled_date).getMonth() + 1) + '-' + new Date(schedule.scheduled_date).getDate()
+
+            let current_date = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate()
+            
+            if (schedule && schedule_date === current_date ){
+                let user = await UserData(schedule)
+
+                let question = await QuestionData(schedule)
+                
+                if(user.medium === 'Sms'){
+                    Sms('2349034268873', "Hi adedotun,\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
+                    Sms(user.phone, "Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task.")
+                    Sms(user.phone, "If you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion.")
+                    Sms(user.phone, "There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.")
+                    Sms(user.phone, "Please let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley.")
+                    
+                }else{
+                    Email(user, question.category_id.name, html("Hi " + user.title + ' ' + user.last_name + ",\r\n I'm emailing you because it is past 8pm and I haven’t heard whether or not you have completed today’s task. \r\nIf you simply forgot to email me to indicate that you had completed the task, please email me as soon as you can with your photographic evidence to let me know. If however, it completely skipped your mind, don’t worry. It is normal to forget things on occasion. There will be additional opportunities to earn more ballots for the draw to win the gift card.\r\nIf, however, you no longer wish to participate in the study, please let me know as well.\r\nPlease let me know what the circumstance is for me not hearing from you so that I can update my records accordingly.\r\nThank you and have a nice night!\r\nKarley."))                                
                 }
             }
-        }).catch(err => {
-            throw new Error(err)
-        })
+        }
     } catch (error) {
         console.log()
     }
