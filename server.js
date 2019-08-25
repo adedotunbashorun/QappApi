@@ -33,7 +33,6 @@ try {
     process.exit()
 }
 require('./passport-config')
-
 app.use(passport.initialize())
 
 app.use(cors({ 

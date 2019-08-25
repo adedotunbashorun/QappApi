@@ -30,7 +30,7 @@ router.get('/activities', [Guard.isValidUser], (req, res, next) => {
     ActivityController.getAll(req, res, next)
 })
 
-router.get('/incomming/message',(req,res,next) =>{
+router.post('/incomming/message',(req,res,next) =>{
     ExtraController.userSmsResponse(req,res,next)
 })
 
@@ -56,6 +56,14 @@ router.get('/unsubscribe/:email', (req, res, next) => {
 
 router.get('/all/count',[Guard.isValidUser], (req, res, next) => {
     ExtraController.countAllDoc(req, res, next)
+})
+
+router.get('/responses/:user_id', [Guard.isValidUser], (req, res, next) => {
+    ExtraController.getUserResponse(req, res, next)
+})
+
+router.post('/reply_response',[Guard.isValidUser], (req, res, next) => {
+    ExtraController.sendResponse(req, res, next)
 })
 
 router.get('/my_activities/:user_id', [Guard.isValidUser], (req, res, next) => {

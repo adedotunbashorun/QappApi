@@ -13,6 +13,7 @@ cron.schedule("*/01 * * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 2")
     try {        
+        // Activity.Sms('+2349034268873','Hello from test serve')
         ResponseService.logic()     
         Activity.scheduleTime()  
     } catch (err) {
@@ -20,7 +21,7 @@ cron.schedule("*/01 * * * *", function () {
     }
 })
 
-cron.schedule("* 07 * * *", function () {
+cron.schedule("* 15 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 3")
     try {
@@ -30,7 +31,7 @@ cron.schedule("* 07 * * *", function () {
     }
 })
 
-cron.schedule("55 20 * * *", function () {
+cron.schedule("59 23 * * *", function () {
     console.log("---------------------")
     console.log("Running Cron Job 4")
     try {
@@ -39,4 +40,7 @@ cron.schedule("55 20 * * *", function () {
     } catch (err) {
         console.log(err)
     }
-})
+}, {
+    scheduled: true,
+    timezone: "America/Chicago"
+  })

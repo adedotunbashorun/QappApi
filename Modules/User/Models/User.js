@@ -31,7 +31,8 @@ const UserSchema = new Schema({
     is_active: { type: Boolean, required: true, default: false },
     temporarytoken: { type: String, default: null },
     deleted_at: { type: Date, default: null },
-    is_scheduled: { type: Boolean, default: false }
+    is_scheduled: { type: Boolean, default: false },
+    reset_password: { type: Boolean, default: false }
 }, { timestamps: true }, { toJSON: { virtuals: true } })
 
 UserSchema.virtual('schedules', {

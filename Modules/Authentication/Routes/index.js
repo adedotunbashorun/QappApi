@@ -13,6 +13,10 @@ router.patch('/activate/:token', (req, res, next) => {
     AuthenticationController.Activate(req, res, next);
 });
 
+router.get('/activate/:id', (req, res, next) => {
+    AuthenticationController.ActivateUser(req, res, next);
+});
+
 router.post('/login', (req, res, next) => {
     AuthenticationController.login(req, res, next);
 });
